@@ -82,6 +82,11 @@ cpp-foundations/
 - Professional C++ project structure
 - Code formatting and style consistency
 
+**Essential Reading** (2-3 hours before coding):
+- [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/) - Official tutorial, focus on steps 1-4
+- [Modern CMake Practices](https://cliutils.gitlab.io/modern-cmake/chapters/basics.html) - Modern target-based approach
+- [GitHub Actions for C++](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-cpp) - Basic CI setup
+
 **Why It Matters**: Every real C++ project needs this foundation. Without solid build systems, you can't collaborate or deploy code professionally.
 
 ---
@@ -101,6 +106,12 @@ cpp-foundations/
 - Header-only library design patterns
 - Package management and distribution
 - API design principles
+
+**Essential Reading** (2-3 hours before coding):
+- [C++ Templates: The Complete Guide](https://www.josuttis.com/tmplbook/) - Chapter 1 (Function Templates)
+- [Header-Only Libraries](https://vector-of-bool.github.io/2018/10/05/header-only.html) - Best practices and pitfalls
+- [Google Test Primer](https://google.github.io/googletest/primer.html) - Testing fundamentals
+- [API Design Guidelines](https://www.qt.io/blog/2009/08/12/designing-qt-style-c-apis) - Creating clean interfaces
 
 **Why It Matters**: Most high-performance C++ libraries are header-only for optimal compilation and inlining. Understanding this pattern is essential for financial systems.
 
@@ -122,6 +133,12 @@ cpp-foundations/
 - Benchmark design and interpretation
 - CI integration with performance testing
 
+**Essential Reading** (2-3 hours before coding):
+- [Google Benchmark User Guide](https://github.com/google/benchmark/blob/main/docs/user_guide.md) - Focus on basic usage and avoiding optimization
+- [Docker Best Practices for C++](https://docs.docker.com/language/cpp/) - Multi-stage builds and optimization
+- [Performance Analysis Basics](https://easyperf.net/blog/2019/02/09/Top-Down-performance-analysis-methodology) - Understanding bottlenecks
+- [Sorting Algorithms Overview](https://www.toptal.com/developers/sorting-algorithms) - Visual comparison of different approaches
+
 **Why It Matters**: All modern trading systems run in containers, and performance measurement is critical for optimization decisions.
 
 ---
@@ -142,6 +159,13 @@ cpp-foundations/
 - Data analysis and visualization
 - Performance-driven decision making
 
+**Essential Reading** (2-3 hours before coding):
+- [STL Container Performance](https://www.cppreference.com/w/cpp/container) - Time complexity tables for all containers
+- [Cache-Friendly Data Structures](https://stackoverflow.com/questions/16699247/what-is-a-cache-friendly-code) - Memory layout impact on performance
+- [Big O Cheat Sheet](https://www.bigocheatsheet.com/) - Quick reference for algorithmic complexity
+- [When to Use Which Container](https://stackoverflow.com/questions/471432/in-which-scenario-do-i-use-a-particular-stl-container) - Practical decision guide
+- [Python matplotlib Tutorial](https://matplotlib.org/stable/tutorials/introductory/pyplot.html) - For data visualization
+
 **Why It Matters**: Trading systems live or die on container choice. A wrong data structure can cost microseconds per operation, which translates to lost profits.
 
 ---
@@ -161,6 +185,13 @@ cpp-foundations/
 - Circular buffers and windowed calculations
 - Basic financial market concepts (VWAP)
 - Real-time system design principles
+
+**Essential Reading** (2-3 hours before coding):
+- [Circular Buffer Implementation](https://www.embedded.com/ring-buffer-basics/) - Lock-free ring buffer concepts
+- [VWAP Calculation](https://www.investopedia.com/terms/v/vwap.asp) - Understanding volume-weighted average price
+- [Stream Processing Patterns](https://www.oreilly.com/radar/the-world-beyond-batch-streaming-101/) - Real-time data processing fundamentals
+- [CSV Parsing in C++](https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c) - Efficient file processing techniques
+- [Market Data Basics](https://www.cmegroup.com/education/courses/introduction-to-market-data.html) - Understanding trading data formats
 
 **Why It Matters**: This is fundamentally what trading systems do - process streaming market data and calculate analytics in real-time.
 
@@ -231,6 +262,14 @@ With these foundational skills mastered, you'll be ready to tackle more ambitiou
 ### Financial Context
 - [Market Microstructure in Practice](https://www.amazon.com/Market-Microstructure-Practice-Jean-Philippe-Bouchaud/dp/9813231122)
 - [Algorithmic Trading: Winning Strategies](https://www.amazon.com/Algorithmic-Trading-Winning-Strategies-Rationale/dp/1118460146)
+
+### Daily Study Schedule
+Each day should follow this pattern:
+1. **Morning (2-3 hours)**: Read assigned materials for the day
+2. **Afternoon (4-5 hours)**: Implement the project
+3. **Evening (1 hour)**: Document learnings and prepare for next day
+
+**Time Management**: Don't spend more than 3 hours on reading per day. The goal is practical competence, not theoretical mastery.
 
 ## Contributing
 
