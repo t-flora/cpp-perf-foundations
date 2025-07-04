@@ -1,6 +1,6 @@
 # C++ Foundations: 6-Day Project Series
 
-A progressive series of one-day C++ projects designed to build the foundational skills needed for high-performance financial systems development. Each project introduces essential concepts while building toward the competence required for trading systems engineering.
+A progressive series of one-day C++ projects designed to build the foundational skills needed for high-performance systems development. Each project introduces essential concepts while building toward the competence required for high-performance engineering. Some of these projects may take longer than a day, and that's fine!
 
 ## Repository Structure
 
@@ -96,9 +96,10 @@ cpp-foundations/
 **Essential Reading** (2-3 hours before coding):
 - [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/) - Official tutorial, focus on steps 1-4
 - [Modern CMake Practices](https://cliutils.gitlab.io/modern-cmake/chapters/basics.html) - Modern target-based approach
-- [GitHub Actions for C++](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-cpp) - Basic CI setup
+- [GitHub Actions CMake Workflow](https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml) - Working starter template
+- [CMake Template Project](https://github.com/cpp-best-practices/cmake_template) - Complete example with CI
 
-**Why It Matters**: Every real C++ project needs this foundation. Without solid build systems, you can't collaborate or deploy code professionally.
+**Why It Matters**: Every real C++ project needs this foundation. Without solid build systems, you can't collaborate or deploy code professionally in any high-performance domain.
 
 ---
 
@@ -119,12 +120,11 @@ cpp-foundations/
 - API design principles
 
 **Essential Reading** (2-3 hours before coding):
-- [C++ Templates: The Complete Guide](https://www.josuttis.com/tmplbook/) - Chapter 1 (Function Templates)
-- [Header-Only Libraries](https://vector-of-bool.github.io/2018/10/05/header-only.html) - Best practices and pitfalls
-- [Google Test Primer](https://google.github.io/googletest/primer.html) - Testing fundamentals
-- [API Design Guidelines](https://www.qt.io/blog/2009/08/12/designing-qt-style-c-apis) - Creating clean interfaces
+- [Modern C++ Header-Only Libraries](https://github.com/p-ranav/awesome-hpp) - Examples and best practices
+- [Google Test Primer](http://google.github.io/googletest/primer.html) - Testing fundamentals
+- [API Design Principles](https://wiki.qt.io/API_Design_Principles) - Creating clean interfaces
 
-**Why It Matters**: Most high-performance C++ libraries are header-only for optimal compilation and inlining. This pattern is essential for high-performance systems.
+**Why It Matters**: Most high-performance C++ libraries are header-only for optimal compilation and inlining. Understanding this pattern is essential for systems programming.
 
 ---
 
@@ -148,9 +148,8 @@ cpp-foundations/
 - [Google Benchmark User Guide](https://github.com/google/benchmark/blob/main/docs/user_guide.md) - Focus on basic usage and avoiding optimization
 - [Docker Best Practices for C++](https://docs.docker.com/language/cpp/) - Multi-stage builds and optimization
 - [Performance Analysis Basics](https://easyperf.net/blog/2019/02/09/Top-Down-performance-analysis-methodology) - Understanding bottlenecks
-- [Sorting Algorithms Overview](https://www.toptal.com/developers/sorting-algorithms) - Visual comparison of different approaches
 
-**Why It Matters**: Modern systems run in containers, and performance measurement is critical for optimization decisions.
+**Why It Matters**: All modern high-performance systems run in containers, and performance measurement is critical for optimization decisions.
 
 ---
 
@@ -173,20 +172,18 @@ cpp-foundations/
 **Essential Reading** (2-3 hours before coding):
 - [STL Container Performance](https://www.cppreference.com/w/cpp/container) - Time complexity tables for all containers
 - [Cache-Friendly Data Structures](https://stackoverflow.com/questions/16699247/what-is-a-cache-friendly-code) - Memory layout impact on performance
-- [Big O Cheat Sheet](https://www.bigocheatsheet.com/) - Quick reference for algorithmic complexity
 - [When to Use Which Container](https://stackoverflow.com/questions/471432/in-which-scenario-do-i-use-a-particular-stl-container) - Practical decision guide
-- [Python matplotlib Tutorial](https://matplotlib.org/stable/tutorials/introductory/pyplot.html) - For data visualization
 
-**Why It Matters**: High-performance systems live or die on container choice. A wrong data structure can cost microseconds per operation, which can add up very quickly.
+**Why It Matters**: High-performance systems live or die on container choice. A wrong data structure can cost microseconds per operation, which translates to real performance bottlenecks.
 
 ---
 
 ### Day 5: Real-Time Data Processor
 **Goal**: Handle streaming data efficiently
 
-**What You'll Build**: Mock market data processor with real-time analytics
-- Parse CSV stream of trades (timestamp, symbol, price, quantity)
-- Calculate Volume-Weighted Average Price (VWAP) per symbol
+**What You'll Build**: Mock data processor with real-time analytics
+- Parse CSV stream of data records (timestamp, identifier, value, quantity)
+- Calculate moving averages and other windowed statistics per identifier
 - Implement sliding window calculations using ring buffers
 - Output real-time results with configurable update frequency
 - Handle data validation and error cases
@@ -194,7 +191,7 @@ cpp-foundations/
 **Skills Gained**:
 - Stream processing patterns
 - Circular buffers and windowed calculations
-- Basic financial market concepts (VWAP)
+- Real-time analytics concepts
 - Real-time system design principles
 
 **Essential Reading** (2-3 hours before coding):
@@ -202,7 +199,6 @@ cpp-foundations/
 - [VWAP Calculation](https://www.investopedia.com/terms/v/vwap.asp) - Understanding volume-weighted average price
 - [Stream Processing Patterns](https://www.oreilly.com/radar/the-world-beyond-batch-streaming-101/) - Real-time data processing fundamentals
 - [CSV Parsing in C++](https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c) - Efficient file processing techniques
-- [Market Data Basics](https://www.cmegroup.com/education/courses/introduction-to-market-data.html) - Understanding trading data formats
 
 ### Day 6: Concurrent Task Processor
 **Goal**: Learn thread safety and parallel processing fundamentals
@@ -222,13 +218,13 @@ cpp-foundations/
 - Scalability measurement and analysis
 
 **Essential Reading** (2-3 hours before coding):
-- [C++ Concurrency in Action - Chapter 2](https://www.manning.com/books/c-plus-plus-concurrency-in-action-second-edition) - Managing threads
+- (Paid textbook) [C++ Concurrency in Action - Chapter 2](https://www.manning.com/books/c-plus-plus-concurrency-in-action-second-edition) - Managing threads
 - [Thread Pool Tutorial](https://en.cppreference.com/w/cpp/thread) - Basic threading primitives
-- [Mutex and Condition Variables](https://thispointer.com/c11-multithreading-part-6-condition-variable-example/) - Synchronization fundamentals
+- [Condition Variables in C++](https://www.geeksforgeeks.org/cpp/cpp-multithreading-condition-variables/) - Synchronization fundamentals
 - [std::atomic Basics](https://en.cppreference.com/w/cpp/atomic/atomic) - Lock-free programming introduction
-- [Thread Safety Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-concurrency) - Best practices from Core Guidelines
+- [Core Guidelines - CP](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-concurrency) - Best practices from Core Guidelines
 
-**Why It Matters**: Many modern systems are inherently concurrent - e.g. in trading, market data processing, order management, and risk calculations all happen in parallel. Understanding thread safety is essential.
+**Why It Matters**: High-performance systems are inherently concurrent - data processing, task scheduling, and resource management all happen in parallel. Understanding thread safety is essential for scalable systems.
 
 ---
 
@@ -266,7 +262,7 @@ Each day builds on the previous:
 2. **Header Libraries** → You understand modern C++ distribution patterns
 3. **Containers + Benchmarks** → You can measure and optimize performance
 4. **Data Structures** → You make informed choices about algorithms and containers
-5. **Stream Processing** → You can handle real-time data like trading systems
+5. **Stream Processing** → You can handle real-time data efficiently
 6. **Concurrency** → You understand thread safety and parallel processing fundamentals
 
 ## Success Criteria
@@ -284,23 +280,11 @@ After completing all 6 projects, you should be able to:
 
 With these foundational skills mastered, you'll be ready to tackle more ambitious projects like:
 - High-performance order book implementation
-- Low-latency market data processing systems
-- Distributed trading system components
-- Real-time risk management systems
+- Low-latency data processing systems
+- Distributed system components
+- Real-time analytics engines
 
-## Resources
-
-### Essential Reading
-- [Modern CMake Tutorial](https://cliutils.gitlab.io/modern-cmake/)
-- [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/)
-- [Google Benchmark Documentation](https://github.com/google/benchmark)
-- [Docker Best Practices for C++](https://docs.docker.com/language/cpp/)
-
-### Financial Context
-- [Market Microstructure in Practice](https://www.amazon.com/Market-Microstructure-Practice-Jean-Philippe-Bouchaud/dp/9813231122)
-- [Algorithmic Trading: Winning Strategies](https://www.amazon.com/Algorithmic-Trading-Winning-Strategies-Rationale/dp/1118460146)
-
-### Daily Study Schedule
+## Daily Study Schedule
 Each day should follow this pattern:
 1. **Morning (2-3 hours)**: Read assigned materials for the day
 2. **Afternoon (4-5 hours)**: Implement the project
