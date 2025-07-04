@@ -1,4 +1,4 @@
-# C++ Foundations: 5-Day Project Series
+# C++ Foundations: 6-Day Project Series
 
 A progressive series of one-day C++ projects designed to build the foundational skills needed for high-performance financial systems development. Each project introduces essential concepts while building toward the competence required for trading systems engineering.
 
@@ -53,15 +53,26 @@ cpp-foundations/
 │   │   └── plot_results.py
 │   └── results/
 │       └── .gitkeep
-└── day5-realtime-processor/
+├── day5-realtime-processor/
+│   ├── README.md
+│   ├── CMakeLists.txt
+│   ├── src/
+│   │   └── market_data_processor.cpp
+│   ├── data/
+│   │   └── sample_trades.csv
+│   └── tests/
+│       └── test_vwap.cpp
+└── day6-concurrent-calculator/
     ├── README.md
     ├── CMakeLists.txt
     ├── src/
-    │   └── market_data_processor.cpp
-    ├── data/
-    │   └── sample_trades.csv
-    └── tests/
-        └── test_vwap.cpp
+    │   ├── thread_pool.h
+    │   ├── concurrent_calculator.cpp
+    │   └── benchmark_concurrency.cpp
+    ├── tests/
+    │   └── test_thread_safety.cpp
+    └── scripts/
+        └── plot_scaling.py
 ```
 
 ## Project Overview
@@ -113,7 +124,7 @@ cpp-foundations/
 - [Google Test Primer](https://google.github.io/googletest/primer.html) - Testing fundamentals
 - [API Design Guidelines](https://www.qt.io/blog/2009/08/12/designing-qt-style-c-apis) - Creating clean interfaces
 
-**Why It Matters**: Most high-performance C++ libraries are header-only for optimal compilation and inlining. Understanding this pattern is essential for financial systems.
+**Why It Matters**: Most high-performance C++ libraries are header-only for optimal compilation and inlining. This pattern is essential for high-performance systems.
 
 ---
 
@@ -139,7 +150,7 @@ cpp-foundations/
 - [Performance Analysis Basics](https://easyperf.net/blog/2019/02/09/Top-Down-performance-analysis-methodology) - Understanding bottlenecks
 - [Sorting Algorithms Overview](https://www.toptal.com/developers/sorting-algorithms) - Visual comparison of different approaches
 
-**Why It Matters**: All modern trading systems run in containers, and performance measurement is critical for optimization decisions.
+**Why It Matters**: Modern systems run in containers, and performance measurement is critical for optimization decisions.
 
 ---
 
@@ -166,7 +177,7 @@ cpp-foundations/
 - [When to Use Which Container](https://stackoverflow.com/questions/471432/in-which-scenario-do-i-use-a-particular-stl-container) - Practical decision guide
 - [Python matplotlib Tutorial](https://matplotlib.org/stable/tutorials/introductory/pyplot.html) - For data visualization
 
-**Why It Matters**: Trading systems live or die on container choice. A wrong data structure can cost microseconds per operation, which translates to lost profits.
+**Why It Matters**: High-performance systems live or die on container choice. A wrong data structure can cost microseconds per operation, which can add up very quickly.
 
 ---
 
@@ -193,9 +204,33 @@ cpp-foundations/
 - [CSV Parsing in C++](https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c) - Efficient file processing techniques
 - [Market Data Basics](https://www.cmegroup.com/education/courses/introduction-to-market-data.html) - Understanding trading data formats
 
-**Why It Matters**: This is fundamentally what trading systems do - process streaming market data and calculate analytics in real-time.
+### Day 6: Concurrent Task Processor
+**Goal**: Learn thread safety and parallel processing fundamentals
 
-## Getting Started
+**What You'll Build**: Multi-threaded mathematical computation system
+- Thread pool for distributing CPU-intensive calculations
+- Thread-safe queue using std::mutex and std::condition_variable
+- Parallel processing of mathematical operations (matrix multiplication, prime finding)
+- Benchmark comparing single-threaded vs multi-threaded performance
+- Proper synchronization and resource management
+
+**Skills Gained**:
+- std::thread, std::mutex, std::condition_variable
+- Thread pool design patterns
+- Race condition prevention
+- Lock-free data structures (std::atomic basics)
+- Scalability measurement and analysis
+
+**Essential Reading** (2-3 hours before coding):
+- [C++ Concurrency in Action - Chapter 2](https://www.manning.com/books/c-plus-plus-concurrency-in-action-second-edition) - Managing threads
+- [Thread Pool Tutorial](https://en.cppreference.com/w/cpp/thread) - Basic threading primitives
+- [Mutex and Condition Variables](https://thispointer.com/c11-multithreading-part-6-condition-variable-example/) - Synchronization fundamentals
+- [std::atomic Basics](https://en.cppreference.com/w/cpp/atomic/atomic) - Lock-free programming introduction
+- [Thread Safety Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-concurrency) - Best practices from Core Guidelines
+
+**Why It Matters**: Many modern systems are inherently concurrent - e.g. in trading, market data processing, order management, and risk calculations all happen in parallel. Understanding thread safety is essential.
+
+---
 
 ### Prerequisites
 - C++17 or later compiler (GCC 9+, Clang 10+, or MSVC 2019+)
@@ -232,15 +267,17 @@ Each day builds on the previous:
 3. **Containers + Benchmarks** → You can measure and optimize performance
 4. **Data Structures** → You make informed choices about algorithms and containers
 5. **Stream Processing** → You can handle real-time data like trading systems
+6. **Concurrency** → You understand thread safety and parallel processing fundamentals
 
 ## Success Criteria
 
-After completing all 5 projects, you should be able to:
+After completing all 6 projects, you should be able to:
 - Set up a new C++ project with CMake and CI from scratch
 - Design and implement header-only libraries
 - Write and interpret performance benchmarks
 - Choose appropriate data structures for different use cases
 - Process streaming data efficiently
+- Write thread-safe concurrent code
 - Containerize C++ applications for deployment
 
 ## Next Steps
