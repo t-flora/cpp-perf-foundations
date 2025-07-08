@@ -1,6 +1,26 @@
 # C++ for High-Performance Engineering: 6-Day Foundational Project Series
 
-A progressive series of one-day C++ projects designed to build the foundational skills needed for high-performance systems development. Each project introduces essential concepts while building toward the competence required for high-performance engineering. Some of these projects may take longer than a day, and that's fine!
+> **📚 Learning Resource**: This is the **template branch** containing project skeletons for learning.
+> 
+> **For learners**: You're in the right place! This branch contains empty project templates to work with.
+> 
+> **For instructors/reference**: Switch to the `main` branch to see complete solutions:
+> ```bash
+> git checkout main
+> ```
+
+## Getting Started
+
+**Clone this template branch to start learning**:
+```bash
+git clone -b template https://github.com/YOUR_USERNAME/cpp-perf-foundations.git
+cd cpp-perf-foundations
+```
+
+**Or if you already cloned, switch to template branch**:
+```bash
+git checkout template
+```
 
 ## Repository Structure
 
