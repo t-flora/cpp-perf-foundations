@@ -1,4 +1,4 @@
-# C++ Foundations: 6-Day Project Series
+# C++ for High-Performance Engineering: 6-Day Foundational Project Series
 
 A progressive series of one-day C++ projects designed to build the foundational skills needed for high-performance systems development. Each project introduces essential concepts while building toward the competence required for high-performance engineering. Some of these projects may take longer than a day, and that's fine!
 
