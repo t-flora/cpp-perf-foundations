@@ -60,7 +60,7 @@ cmake --build .
 
 ## Configuring Github Actions CI
 The GitHub Actions workflow for this project is defined in `../.github/workflows/day1-ci.yml`.  
-It provides automated CI (Continuous Integration) for every push or pull request that affects the `day1-cmake-ci` directory.
+It provides automated CI (Continuous Integration) for every push or pull request that affects the `day1-cmake-ci` directory. Beware how you set up your branches - workflows will run on updates to all of them by default.
 
 **Key features:**
 - **Triggers:**  

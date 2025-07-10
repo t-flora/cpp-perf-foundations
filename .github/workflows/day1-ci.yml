@@ -2,7 +2,7 @@ name: Day 1 - CMake & CI
 
 on:
   push:
-    branches: [ main, template ] # CI will trigger on any push to main or template branch
+    branches: [ main, template, 'fix/*', 'feature/*', 'day*' ] # CI will trigger on main, template, fix, feature, and day-specific branches
     paths:
       - 'day1-cmake-ci/**' # CI will only trigger on changes to day1-cmake-ci directory
   pull_request: # CI will trigger on any pull request changing day1-cmake-ci directory
