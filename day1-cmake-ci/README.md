@@ -8,7 +8,7 @@ A template-based calculator library demonstrating modern C++ build practices wit
 - **Interactive calculator** with input parsing
 - **Simple runtime tests** using `<cassert>` for verification
 - **CMake build system** with integrated testing support
-- **Github Actions CI** for testing builds upon pushing code
+- **Github Actions CI** for testing builds upon pushing code/opening PRs
 
 ## Project Structure
 
@@ -84,7 +84,7 @@ If any step fails (e.g., build error, test failure, or missing dependency), the 
 **Follow-up:**  
 If you wanted to simulate the CI run locally, what should you do?
 
-## Extra: Running Tests
+## Extra: Running simple tests
 
 ### Direct Execution
 ```bash
