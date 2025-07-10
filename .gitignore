@@ -1,5 +1,6 @@
 untracked-proposals/*
 # ignore all build directories
 */*build/*
+*build/*
 # ignore all vscode directories
 .vscode/*

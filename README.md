@@ -40,11 +40,6 @@ cpp-foundations/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml           # GitHub Actions CI
-├── common/
-│   ├── CMakeLists.txt       # Shared utilities
-│   └── include/
-│       └── common/
-│           └── timer.h      # Shared timing utilities
 ├── day1-cmake-ci/
 │   ├── README.md
 │   ├── CMakeLists.txt
@@ -321,6 +316,13 @@ Each day should follow this pattern:
 
 **Time Management**: Don't spend more than 3 hours on reading per day. The goal is practical competence, not theoretical mastery.
 
+## Versioning and Releases
+
+This project follows [semantic versioning](https://semver.org/) adapted for educational content:
+- **Major**: Breaking changes to project structure or prerequisites
+- **Minor**: New projects or significant enhancements  
+- **Patch**: Bug fixes and documentation updates
+
 ## Contributing
 
 This is a learning repository. Each project should be:
@@ -331,4 +333,4 @@ This is a learning repository. Each project should be:
 
 ---
 
-**Remember**: The goal isn't to build the most sophisticated system possible, but to develop the foundational competence that makes sophisticated systems achievable.
+**Remember**: The goal isn't to build the most sophisticated systems possible, but to develop the foundational competence that makes sophisticated systems _achievable_ in the first place.
