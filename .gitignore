@@ -1,1 +1,5 @@
-day*/*
+untracked-proposals/*
+# ignore all build directories
+*/*build/*
+# ignore all vscode directories
+.vscode/*
