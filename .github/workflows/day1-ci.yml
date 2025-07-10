@@ -1,0 +1,45 @@
+name: Day 1 - CMake & CI
+
+on:
+  push:
+    branches: [ main, template ] # CI will trigger on any push to main or template branch
+    paths:
+      - 'day1-cmake-ci/**' # CI will only trigger on changes to day1-cmake-ci directory
+  pull_request: # CI will trigger on any pull request changing day1-cmake-ci directory
+    paths:
+      - 'day1-cmake-ci/**'
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }} # CI will run on all supported OSes
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+    - name: Checkout code # CI will checkout the code from the repository
+      uses: actions/checkout@v4 # without this, the runner won't have access to your code
+
+    - name: Install CMake (Ubuntu) # CI will install CMake on target platform
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get update && sudo apt-get install -y cmake
+
+    - name: Install CMake (macOS)
+      if: matrix.os == 'macos-latest'
+      run: brew install cmake
+
+    - name: Install CMake (Windows)
+      if: matrix.os == 'windows-latest'
+      run: choco install cmake
+
+    - name: Configure project # run the CMake build configuration step
+      working-directory: day1-cmake-ci
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Debug
+
+    - name: Build project # run the CMake build step
+      working-directory: day1-cmake-ci
+      run: cmake --build build --config Debug
+
+    - name: Run tests # run tests with CTest
+      working-directory: day1-cmake-ci/build
+      run: ctest --verbose --config Debug
