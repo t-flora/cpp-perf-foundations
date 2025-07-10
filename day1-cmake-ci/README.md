@@ -15,7 +15,6 @@ A template-based calculator library demonstrating modern C++ build practices wit
 ```
 day1-cmake-ci/
 ├── src/
-├── src/
 │   ├── calculator.hpp      # Template calculator functions + helpers
 │   └── main.cpp            # Interactive calculator application
 │   └── CMakeLists.txt      # Build config for header-only interface library target and executable target for interactive calculator

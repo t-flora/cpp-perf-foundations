@@ -37,7 +37,13 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: choco install cmake
 
-    - name: Configure project # run the CMake build configuration step
+    - name: Configure project (Windows) # force Ninja generator for single-config behavior
+      if: runner.os == 'Windows'
+      working-directory: day1-cmake-ci
+      run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Debug
+
+    - name: Configure project (Unix) # run the CMake build configuration step
+      if: runner.os != 'Windows'
       working-directory: day1-cmake-ci
       run: cmake -B build -DCMAKE_BUILD_TYPE=Debug
 
