@@ -40,7 +40,7 @@ jobs:
     - name: Configure project (Windows) # run the CMake build configuration step  
       if: runner.os == 'Windows'
       working-directory: day1-cmake-ci
-      run: cmake -B build # -B is the build directory flag
+      run: cmake -B build -G "Visual Studio 17 2022" # -G is the generator flag, and "Visual Studio 17 2022" is the generator name for Visual Studio 2022
 
     - name: Configure project (Unix) # run the CMake build configuration step
       if: runner.os != 'Windows'
