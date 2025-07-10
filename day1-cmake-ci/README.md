@@ -64,7 +64,7 @@ It provides automated CI (Continuous Integration) for every push or pull request
 
 **Key features:**
 - **Triggers:**  
-  - Runs on any push to `main` or `template` branches, or on pull requests that modify files in `day1-cmake-ci/`.
+  - Runs on any push to `main` or `template` branches, or on pull requests, that modify files in `day1-cmake-ci/`.
 - **Platforms:**  
   - The workflow tests your code on three operating systems: **Ubuntu**, **macOS**, and **Windows** (using a matrix strategy).
 - **Steps:**  

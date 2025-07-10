@@ -22,7 +22,12 @@ jobs:
 
     - name: Install CMake (Ubuntu) # CI will install CMake on target platform
       if: matrix.os == 'ubuntu-latest'
-      run: apt-get update && apt-get install -y cmake build-essential
+      run: |
+        if command -v sudo >/dev/null 2>&1; then
+          sudo apt-get update && sudo apt-get install -y cmake build-essential
+        else
+          apt-get update && apt-get install -y cmake build-essential
+        fi
 
     - name: Install CMake (macOS)
       if: matrix.os == 'macos-latest'
