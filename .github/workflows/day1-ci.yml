@@ -2,7 +2,7 @@ name: Day 1 - CMake & CI
 
 on:
   push:
-    branches: [ main, template ] # CI will trigger on any push to main or template branch
+    branches: [ main, template, 'fix/*', 'feature/*', 'day*' ] # CI will trigger on main, template, fix, feature, and day-specific branches
     paths:
       - 'day1-cmake-ci/**' # CI will only trigger on changes to day1-cmake-ci directory
   pull_request: # CI will trigger on any pull request changing day1-cmake-ci directory
@@ -37,32 +37,20 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: choco install cmake
 
-    - name: Configure project (Windows) # run the CMake build configuration step  
+    - name: Configure project (Windows) # force Ninja generator for single-config behavior
       if: runner.os == 'Windows'
       working-directory: day1-cmake-ci
-      run: cmake -B build # -B is the build directory flag
+      run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Debug
 
     - name: Configure project (Unix) # run the CMake build configuration step
       if: runner.os != 'Windows'
       working-directory: day1-cmake-ci
-      run: cmake -B build -DCMAKE_BUILD_TYPE=Debug # -DCMAKE_BUILD_TYPE=Debug is the build type flag, needed in Unix at the configuration step
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Debug
 
-    - name: Build project (Windows) # run the CMake build step
-      if: runner.os == 'Windows'
-      working-directory: day1-cmake-ci
-      run: cmake --build build --config Debug # --config Debug is the build type flag, needed in Windows at the build step
-
-    - name: Build project (Unix) # run the CMake build step
-      if: runner.os != 'Windows'
+    - name: Build project # run the CMake build step
       working-directory: day1-cmake-ci
       run: cmake --build build
 
-    - name: Run tests (Windows) # run tests with CTest (Windows only - the --config Debug flag is required and not supported on Unix)
-      if: runner.os == 'Windows'
-      working-directory: day1-cmake-ci/build
-      run: ctest --verbose --config Debug # --config Debug is needed in Windows at the test step
-
-    - name: Run tests (Unix) # run tests with CTest
-      if: runner.os != 'Windows'
+    - name: Run tests # run tests with CTest
       working-directory: day1-cmake-ci/build
       run: ctest --verbose

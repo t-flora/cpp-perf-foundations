@@ -15,7 +15,6 @@ A template-based calculator library demonstrating modern C++ build practices wit
 ```
 day1-cmake-ci/
 ├── src/
-├── src/
 │   ├── calculator.hpp      # Template calculator functions + helpers
 │   └── main.cpp            # Interactive calculator application
 │   └── CMakeLists.txt      # Build config for header-only interface library target and executable target for interactive calculator
@@ -60,7 +59,7 @@ cmake --build .
 
 ## Configuring Github Actions CI
 The GitHub Actions workflow for this project is defined in `../.github/workflows/day1-ci.yml`.  
-It provides automated CI (Continuous Integration) for every push or pull request that affects the `day1-cmake-ci` directory.
+It provides automated CI (Continuous Integration) for every push or pull request that affects the `day1-cmake-ci` directory. Beware how you set up your branches - workflows will run on updates to all of them by default.
 
 **Key features:**
 - **Triggers:**  
@@ -76,7 +75,7 @@ It provides automated CI (Continuous Integration) for every push or pull request
 
 **What this means for you:**  
 Every time you push changes or open a pull request, your code will be automatically built and tested on all three major platforms.  
-If any step fails (e.g., build error, test failure, or missing dependency), the workflow will mark the CI run as failed, so you can catch issues before merging. There are a _lot_ of ways these steps can go wrong, especially if you're trying to do cross-platform development. **Consider setting up CI for the platform you are using, and adding other platforms as a stretch goal.**
+If any step fails (e.g., build error, test failure, or missing dependency), the workflow will mark the CI run as failed, so you can catch issues before merging. There are a _lot_ of ways these steps can go wrong, especially if you're trying to do cross-platform development. **Consider setting up CI for the platform you are using, and adding other platforms as a stretch goal.** If you are on Windows, in particular, this step may be a bit more difficult to get right (that's usually the case with Windows) - generating the Debug build has to use the correct generator.
 
 **File location:**  
 `cpp-perf-foundations/.github/workflows/day1-ci.yml`
