@@ -76,7 +76,7 @@ It provides automated CI (Continuous Integration) for every push or pull request
 
 **What this means for you:**  
 Every time you push changes or open a pull request, your code will be automatically built and tested on all three major platforms.  
-If any step fails (e.g., build error, test failure, or missing dependency), the workflow will mark the CI run as failed, so you can catch issues before merging. There are a _lot_ of ways these steps can go wrong, especially if you're trying to do cross-platform development.
+If any step fails (e.g., build error, test failure, or missing dependency), the workflow will mark the CI run as failed, so you can catch issues before merging. There are a _lot_ of ways these steps can go wrong, especially if you're trying to do cross-platform development. **Consider setting up CI for the platform you are using, and adding other platforms as a stretch goal.**
 
 **File location:**  
 `cpp-perf-foundations/.github/workflows/day1-ci.yml`
