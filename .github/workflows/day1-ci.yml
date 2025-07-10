@@ -22,7 +22,7 @@ jobs:
 
     - name: Install CMake (Ubuntu) # CI will install CMake on target platform
       if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get update && sudo apt-get install -y cmake
+      run: apt-get update && apt-get install -y cmake build-essential
 
     - name: Install CMake (macOS)
       if: matrix.os == 'macos-latest'
@@ -38,8 +38,8 @@ jobs:
 
     - name: Build project # run the CMake build step
       working-directory: day1-cmake-ci
-      run: cmake --build build --config Debug
+      run: cmake --build build
 
     - name: Run tests # run tests with CTest
       working-directory: day1-cmake-ci/build
-      run: ctest --verbose --config Debug
+      run: ctest --verbose
