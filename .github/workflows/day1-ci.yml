@@ -45,6 +45,12 @@ jobs:
       working-directory: day1-cmake-ci
       run: cmake --build build
 
-    - name: Run tests # run tests with CTest
+    - name: Run tests (Windows) # run tests with CTest (Windows only - the --config Debug flag is required and not supported on Unix)
+      if: matrix.os == 'windows-latest'
+      working-directory: day1-cmake-ci/build
+      run: ctest --verbose --config Debug
+
+    - name: Run tests (Unix) # run tests with CTest
+      if: matrix.os != 'windows-latest'
       working-directory: day1-cmake-ci/build
       run: ctest --verbose
