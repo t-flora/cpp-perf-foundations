@@ -123,7 +123,7 @@ cpp-foundations/
 - [GitHub Actions CMake Workflow](https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml) - Working starter template
 - [CMake Template Project](https://github.com/cpp-best-practices/cmake_template) - Complete example with CI
 
-**Why It Matters**: Every real C++ project needs this foundation. Without solid build systems, you can't collaborate or deploy code professionally in any high-performance domain.
+**Why it matters**: Every real C++ project needs this foundation. Without solid build systems, you can't collaborate or deploy code professionally in any high-performance domain.
 
 ---
 
@@ -132,10 +132,12 @@ cpp-foundations/
 
 **What You'll Build**: Vector/matrix operations library for 2D/3D vectors
 - Single header file with templated vector operations
-- Comprehensive unit tests with Google Test
 - Example usage demonstrating the API
 - CMake export files for easy integration
+
+*If time permits*:
 - Documentation with usage examples
+- A few unit tests with Google Test
 
 **Skills Gained**:
 - Template programming fundamentals
@@ -144,11 +146,22 @@ cpp-foundations/
 - API design principles
 
 **Essential Reading** (2-3 hours before coding):
+- [Effective Modern C++ - Item 30](https://www.oreilly.com/library/view/effective-modern-c/9781491908419/) - Perfect forwarding for template performance
+- [Expression Templates Explained (ModernesCpp)](https://www.modernescpp.com/index.php/expression-templates) - Eliminating temporary objects in mathematical operations
+- [C++ Reference: constexpr specifier](https://en.cppreference.com/w/cpp/language/constexpr) - Compile-time computation fundamentals
+- [Google Highway SIMD Library](https://github.com/google/highway) - Cross-platform vectorization basics
+
+*Additional resources*:
 - [Modern C++ Header-Only Libraries](https://github.com/p-ranav/awesome-hpp) - Examples and best practices
 - [Google Test Primer](http://google.github.io/googletest/primer.html) - Testing fundamentals
 - [API Design Principles](https://wiki.qt.io/API_Design_Principles) - Creating clean interfaces
 
-**Why It Matters**: Most high-performance C++ libraries are header-only for optimal compilation and inlining. Understanding this pattern is essential for systems programming.
+**Tools to for quick performance scans**:
+- [Compiler Explorer](https://godbolt.org/) - See assembly output from your optimizations
+- [Quick Bench](https://quick-bench.com/) - Online benchmarking for code snippets
+- [C++ Insights](https://cppinsights.io/) - Understand template instantiation
+
+**Why it matters**: Most high-performance C++ libraries are header-only for optimal compilation and inlining. Understanding this pattern is essential for systems programming.
 
 ---
 
@@ -173,7 +186,7 @@ cpp-foundations/
 - [Docker Best Practices for C++](https://docs.docker.com/language/cpp/) - Multi-stage builds and optimization
 - [Performance Analysis Basics](https://easyperf.net/blog/2019/02/09/Top-Down-performance-analysis-methodology) - Understanding bottlenecks
 
-**Why It Matters**: All modern high-performance systems run in containers, and performance measurement is critical for optimization decisions.
+**Why it matters**: All modern high-performance systems run in containers, and performance measurement is critical for optimization decisions.
 
 ---
 
@@ -198,7 +211,7 @@ cpp-foundations/
 - [Cache-Friendly Data Structures](https://stackoverflow.com/questions/16699247/what-is-a-cache-friendly-code) - Memory layout impact on performance
 - [When to Use Which Container](https://stackoverflow.com/questions/471432/in-which-scenario-do-i-use-a-particular-stl-container) - Practical decision guide
 
-**Why It Matters**: High-performance systems live or die on container choice. A wrong data structure can cost microseconds per operation, which translates to real performance bottlenecks.
+**Why it matters**: High-performance systems live or die on container choice. A wrong data structure can cost microseconds per operation, which translates to real performance bottlenecks.
 
 ---
 
@@ -248,7 +261,7 @@ cpp-foundations/
 - [std::atomic Basics](https://en.cppreference.com/w/cpp/atomic/atomic) - Lock-free programming introduction
 - [Core Guidelines - CP](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-concurrency) - Best practices from Core Guidelines
 
-**Why It Matters**: High-performance systems are inherently concurrent - data processing, task scheduling, and resource management all happen in parallel. Understanding thread safety is essential for scalable systems.
+**Why it matters**: High-performance systems are inherently concurrent - data processing, task scheduling, and resource management all happen in parallel. Understanding thread safety is essential for scalable systems.
 
 ---
 
