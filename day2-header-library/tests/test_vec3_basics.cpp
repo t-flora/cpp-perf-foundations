@@ -4,7 +4,7 @@
 #include <cmath>
 
 int main() {
-    using namespace vec3;
+    // using namespace vec3;
     
     // Test basic construction
     Vec3 v1(1.0, 2.0, 3.0);
@@ -12,7 +12,7 @@ int main() {
     
     // Test addition
     Vec3 sum = v1 + v2;
-    assert(sum.x == 5.0 && sum.y == 7.0 && sum.z == 9.0);
+    assert(sum.x() == 5.0 && sum.y() == 7.0 && sum.z() == 9.0);
     
     // Test dot product
     double dot_result = v1.dot(v2);
@@ -20,7 +20,7 @@ int main() {
     
     // Test scalar multiplication
     Vec3 scaled = v1 * 2.0;
-    assert(scaled.x == 2.0 && scaled.y == 4.0 && scaled.z == 6.0);
+    assert(scaled.x() == 2.0 && scaled.y() == 4.0 && scaled.z() == 6.0);
     
     // Test length calculation
     Vec3 unit_x(1.0, 0.0, 0.0);
