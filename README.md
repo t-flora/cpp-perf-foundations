@@ -156,6 +156,7 @@ cpp-foundations/
 - [Google Test Primer](http://google.github.io/googletest/primer.html) - Testing fundamentals
 - [API Design Principles](https://wiki.qt.io/API_Design_Principles) - Creating clean interfaces
 
+
 **Tools to for quick performance scans**:
 - [Compiler Explorer](https://godbolt.org/) - See assembly output from your optimizations
 - [Quick Bench](https://quick-bench.com/) - Online benchmarking for code snippets
