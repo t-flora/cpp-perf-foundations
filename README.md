@@ -36,6 +36,8 @@ git checkout -b solutions upstream/main
 ```
 cpp-foundations/
 ├── README.md                 # This file
+├── scripts/
+│   └── test_all.sh          # Build and test every day
 ├── .github/
 │   └── workflows/
 │       └── day1-ci.yml      # GitHub Actions CI for Day 1
@@ -53,13 +55,19 @@ cpp-foundations/
 ├── day2-header-library/
 │   ├── README.md
 │   ├── CMakeLists.txt
+│   ├── cmake/
+│   │   └── vec3Config.cmake.in
 │   ├── include/
 │   │   └── vec3/
 │   │       └── vec3.hpp
+│   ├── examples/
+│   │   └── consumer/        # Uses the installed library via find_package
 │   ├── benchmarks/
-│   │   └── simple_benchmark.cpp
+│   │   ├── simple_benchmark.cpp
+│   │   └── bench_vec3.cpp
 │   └── tests/
-│       └── test_vec3_basics.cpp
+│       ├── test_vec3_basics.cpp
+│       └── test_vec3_constexpr.cpp
 ├── day3-docker-benchmarks/
 │   ├── README.md
 │   ├── CMakeLists.txt
@@ -67,7 +75,8 @@ cpp-foundations/
 │   ├── run_benchmarks.sh
 │   ├── include/
 │   │   └── sorting/
-│   │       └── sorting.hpp
+│   │       ├── sorting.hpp
+│   │       └── inputs.hpp
 │   ├── benchmarks/
 │   │   └── bench_sorting.cpp
 │   ├── tests/
@@ -77,12 +86,17 @@ cpp-foundations/
 ├── day4-container-performance/
 │   ├── README.md
 │   ├── CMakeLists.txt
-│   ├── src/
-│   │   └── container_comparison.cpp
+│   ├── include/
+│   │   └── containers/
+│   │       └── workloads.hpp
+│   ├── benchmarks/
+│   │   └── bench_containers.cpp
+│   ├── tests/
+│   │   └── test_workloads.cpp
 │   ├── scripts/
 │   │   └── plot_results.py
 │   └── results/
-│       └── .gitkeep
+│       └── DECISION_GUIDE.md
 ├── day5-realtime-processor/
 │   ├── README.md
 │   ├── CMakeLists.txt
@@ -181,7 +195,7 @@ cpp-foundations/
 **What You'll Build**: A Google Benchmark suite comparing sorting algorithms, packaged in a multi-stage Docker image
 - Warm-up: port your Day 2 `chrono` loop to Google Benchmark and explain why the numbers differ
 - Your own quicksort and LSD radix sort, tested for correctness against `std::sort`
-- Benchmarks across sizes (1K-1M elements) and input distributions (random, sorted, reversed, few unique), with repetitions and JSON output
+- Benchmarks across sizes (16 to 1M elements) and input distributions (random, sorted, reversed, few unique), with repetitions and JSON output
 - Multi-stage Dockerfile: toolchain in the build stage, only the binary in the runtime stage
 - `run_benchmarks.sh`, which builds the image, runs it, and writes timestamped results to `results/`
 - A short `ANALYSIS.md` comparing the algorithms, and native vs. containerized runs
@@ -213,27 +227,38 @@ cpp-foundations/
 ---
 
 ### Day 4: Data Structure Performance Explorer
-**Goal**: Understand when to use different containers
+**Goal**: Know which container to reach for, backed by your own measurements
 
-**What You'll Build**: Systematic performance comparison of STL containers
-- Compare std::vector, std::unordered_map, std::map, std::set for different operations
-- Vary data sizes (100, 10K, 1M elements) and access patterns
-- Generate CSV results with timing data
-- Python script to create performance visualizations
-- Decision guide for container selection
+**What You'll Build**: A benchmark suite comparing key-value containers and sequences, plus plots and a decision guide
+- `std::map`, `std::unordered_map` (with and without `reserve`), sorted `std::vector` + binary search, and unsorted `std::vector` + linear search, behind one interface and tested to give identical answers
+- Lookup (random vs. sequential keys), build, and iterate benchmarks from 16 to 1M elements
+- The classic vector vs. list sorted-insertion experiment
+- A Python script that turns the JSON results into a CSV and log-log plots
+- A decision guide where every recommendation cites a measurement
+
+*If time permits*:
+- Add an open-addressing hash map (`absl::flat_hash_map`, `boost::unordered_flat_map`) or C++23 `std::flat_map`
+- Back `std::map` with a `std::pmr` arena and measure how much of its cost is allocation
 
 **Skills Gained**:
-- Deep understanding of STL container performance characteristics
-- Systematic benchmarking methodology
-- Data analysis and visualization
-- Performance-driven decision making
+- How caches turn the same Big-O into very different running times
+- Container internals: nodes vs. contiguous storage, hashing, rehashing
+- Benchmarking across sizes and access patterns
+- Data analysis and visualization with Python
 
 **Essential Reading** (2-3 hours before coding):
-- [STL Container Performance](https://www.cppreference.com/w/cpp/container) - Time complexity tables for all containers
-- [Cache-Friendly Data Structures](https://stackoverflow.com/questions/16699247/what-is-a-cache-friendly-code) - Memory layout impact on performance
+- [Efficiency with Algorithms, Performance with Data Structures](https://www.youtube.com/watch?v=fHNmRkzxHWs) - Chandler Carruth, CppCon 2014; why contiguous memory wins
+- [Gallery of Processor Cache Effects](http://igoro.com/archive/gallery-of-processor-cache-effects/) - Seven short experiments to reproduce in your head
+- [Containers Library (cppreference)](https://en.cppreference.com/w/cpp/container) - Complexity guarantees for every container
+- [What Is Cache-Friendly Code?](https://stackoverflow.com/questions/16699247/what-is-a-cache-friendly-code) - Memory layout and performance
+
+*Additional resources*:
+- [Designing a Fast, Efficient, Cache-friendly Hash Table](https://www.youtube.com/watch?v=ncHmEUmJZf4) - Matt Kulukundis, CppCon 2017; what `std::unordered_map` leaves on the table
+- [Abseil Containers Guide](https://abseil.io/docs/cpp/guides/container) - Flat vs. node hash maps in practice
+- [What Every Programmer Should Know About Memory](https://people.freebsd.org/~lstewart/articles/cpumemory.pdf) - Ulrich Drepper; sections 3 and 6
 - [When to Use Which Container](https://stackoverflow.com/questions/471432/in-which-scenario-do-i-use-a-particular-stl-container) - Practical decision guide
 
-**Why it matters**: High-performance systems live or die on container choice. A wrong data structure can cost microseconds per operation, which translates to real performance bottlenecks.
+**Why it matters**: Big-O hides the constant, and on modern hardware the constant is mostly memory: one cache miss costs as much as hundreds of arithmetic operations. The wrong container can cost an order of magnitude, and only measurement shows where.
 
 ---
 
@@ -302,6 +327,8 @@ cmake -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 (cd build && ctest --verbose)
 ```
+
+`scripts/test_all.sh` builds and tests every day (or only the ones you name) in `build/<day>/`.
 
 ## Learning Progression
 
