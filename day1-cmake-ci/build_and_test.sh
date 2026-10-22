@@ -28,6 +28,6 @@ echo "=================="
 
 echo ""
 echo "🎉 Done! You can also run:"
-echo "   📱 Calculator app: ./src/calculator"
+echo "   📱 Calculator app: ./src/Calculator"
 echo "   🧪 Tests directly: ./tests/test_calculator"
 echo "   🏃 Tests via CTest: ctest --verbose" 

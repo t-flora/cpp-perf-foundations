@@ -1,205 +1,74 @@
-# Calculator Project with Simple Testing
-A template-based calculator library demonstrating modern C++ build practices with simple runtime testing using `<cassert>`.
-
-## Features
-
-- **Type-flexible calculator** using `decltype` (C++11) for automatic type deduction
-- **Header-only library** with template functions for add, subtract, multiply, divide
-- **Interactive calculator** with input parsing
-- **Simple runtime tests** using `<cassert>` for verification
-- **CMake build system** with integrated testing support
-- **Github Actions CI** for testing builds upon pushing code/opening PRs
+# Day 1: Calculator with CMake + CI
+A header-only, template-based calculator with an interactive demo, `<cassert>` tests, and a GitHub Actions pipeline.
 
 ## Project Structure
 
 ```
 day1-cmake-ci/
 ├── src/
-│   ├── calculator.hpp      # Template calculator functions + helpers
-│   └── main.cpp            # Interactive calculator application
-│   └── CMakeLists.txt      # Build config for header-only interface library target and executable target for interactive calculator
+│   ├── calculator.hpp      # Template calculator functions + parsing helpers
+│   ├── main.cpp            # Interactive calculator
+│   └── CMakeLists.txt      # INTERFACE library target + demo executable
 ├── tests/
-│   └── test_calculator.cpp # Runtime tests using <cassert>
-│   └── CMakeLists.txt      # Build configuration for testing as a separate executable target in Debug builds
-├── CMakeLists.txt         # Build configuration with testing
-├── build_and_test.sh      # Build and test script
-└── README.md             # This file
+│   ├── test_calculator.cpp # Runtime tests using <cassert>
+│   └── CMakeLists.txt      # Test executable
+├── CMakeLists.txt          # Top-level config, registers the test with CTest
+└── build_and_test.sh       # Configure, build, and test in one step
 
-../.github/workflows/day1-ci.yml # Github Actions YAML file for building this project - .github folder in root directory
+../.github/workflows/day1-ci.yml   # CI lives in the repo root's .github/
 ```
 
-## Building the Project
-### The easy way
-The script in `build_and_test.sh` configures and runs the build process and runs tests.
-You should be acquainted with how CMake works! This script is just to save you a few commands.
+## Building
 
 ```bash
-# Make script executable (first time only)
-chmod +x build_and_test.sh
-
-# Build and test everything
-./build_and_test.sh
+./build_and_test.sh   # configure (Debug), build, run tests
 ```
 
-### Manual Build
+The script only saves you typing. You should know what it runs:
 
 ```bash
-# Create build directory
-mkdir -p day1-build && cd day1-build # always go for out-of-source builds - it'll save you pain
-
-# Configure with CMake
-cmake .. -DCMAKE_BUILD_TYPE=Debug # notice that CMake is case-sensitive
-
-# Build
-cmake --build .
-
-# Run tests
-./tests/test_calculator
+cmake -B build -DCMAKE_BUILD_TYPE=Debug   # always build out-of-source; CMake is case-sensitive here
+cmake --build build
+(cd build && ctest --verbose)             # runs every test registered with add_test()
+./build/src/Calculator                    # interactive demo
 ```
 
-## Configuring Github Actions CI
-The GitHub Actions workflow for this project is defined in `../.github/workflows/day1-ci.yml`.  
-It provides automated CI (Continuous Integration) for every push or pull request that affects the `day1-cmake-ci` directory. Beware how you set up your branches - workflows will run on updates to all of them by default.
+| Target | Kind | Notes |
+|---|---|---|
+| `calculator` | `INTERFACE` library | Header-only; linking to it adds `src/` to the include path |
+| `calculator_run` | executable | Output name is `Calculator` |
+| `test_calculator` | executable | Registered with CTest as `calculator_tests` |
 
-**Key features:**
-- **Triggers:**  
-  - Runs on any push to `main` or `template` branches, or on pull requests, that modify files in `day1-cmake-ci/`.
-- **Platforms:**  
-  - The workflow tests your code on three operating systems: **Ubuntu**, **macOS**, and **Windows** (using a matrix strategy).
-- **Steps:**  
-  1. **Checkout code** using `actions/checkout@v4`.
-  2. **Install CMake** on each platform (using `apt`, `brew`, or `choco` as appropriate).
-  3. **Configure the project** with CMake in Debug mode.
-  4. **Build the project** using CMake.
-  5. **Run tests** using CTest with verbose output.
+Build a single target with `cmake --build build --target calculator_run`.
 
-**What this means for you:**  
-Every time you push changes or open a pull request, your code will be automatically built and tested on all three major platforms.  
-If any step fails (e.g., build error, test failure, or missing dependency), the workflow will mark the CI run as failed, so you can catch issues before merging. There are a _lot_ of ways these steps can go wrong, especially if you're trying to do cross-platform development. **Consider setting up CI for the platform you are using, and adding other platforms as a stretch goal.** If you are on Windows, in particular, this step may be a bit more difficult to get right (that's usually the case with Windows) - generating the Debug build has to use the correct generator.
-
-**File location:**  
-`cpp-perf-foundations/.github/workflows/day1-ci.yml`
-
-**Follow-up:**  
-If you wanted to simulate the CI run locally, what should you do?
-
-## Extra: Running simple tests
-
-### Direct Execution
-```bash
-cd day1-build
-./tests/test_calculator
 ```
-
-### Via CTest
-```bash
-cd day1-build
-ctest --verbose # use CTest for running all your REGISTERED tests!
-```
-
-## Test Coverage
-
-The simple test suite covers:
-### Basic Operations
-- Addition, subtraction, multiplication, division
-- Positive, negative, and zero values
-- Integer and floating-point arithmetic
-
-### Type System (`decltype` functionality)
-- **int + int** → `int`
-- **int + double** → `double`  
-- **float + int** → `float`
-- **double + int** → `double`
-
-### Helper Functions
-- `isInteger()` string validation
-- `parseExpression()` input parsing
-- Whitespace handling and negative number support
-
-### Edge Cases
-- Integer vs. floating-point division behavior
-- Floating-point precision issues
-
-## Calculator Usage
-
-### Interactive Mode
-```bash
-cd day1-build
-./src/calculator
-
 Calculator> 5 + 3
 8
-Calculator> 2.5 * 4.0
-10
-Calculator> q  # Exit
+Calculator> 7 / 2
+3 (integer division)
+Calculator> 7.0 / 2
+3.5
+Calculator> q
 ```
 
-### Supported Operations
-- **Addition**: `5 + 3`, `2.5 + 1.5`
-- **Subtraction**: `10 - 7`, `-5 + 3`
-- **Multiplication**: `4 * 6`, `2.5 * 2.0`
-- **Division**: `8 / 2`, `7.0 / 3` (preserves precision)
+## Design Notes
+- **`decltype` return types**: `add(int, double)` returns `double`, following the usual arithmetic conversions. Integer division truncates: `divide(7, 3) == 2`.
+- **`<cassert>` tests**: no dependencies, and failures report file and line. Assertions compile away under `NDEBUG`, so the tests only check anything in Debug builds.
+- **Floating point**: compare with `approx_equal(a, b, epsilon)`, never `==`.
 
-## Testing Philosophy
+The tests cover the four operations on positive, negative, and zero values; mixed-type results; the `isInteger()` and `parseExpression()` helpers; and integer vs. floating-point division.
 
-This project uses **simple runtime assertions** with `<cassert>`:
+## CI
+`.github/workflows/day1-ci.yml` runs on pushes and PRs that touch `day1-cmake-ci/`. It runs on Ubuntu, macOS, and Windows: checkout → install CMake → configure (Debug) → build → `ctest`.
 
-### Why `<cassert>`?
-- ✅ **Lightweight** - No external dependencies
-- ✅ **Built-in** - Part of standard C++ library
-- ✅ **Clear** - Fails fast with clear error location
-- ✅ **Debug-friendly** - Can be disabled with `NDEBUG`
+Windows uses the Ninja generator because the default Visual Studio generator is multi-config and ignores `CMAKE_BUILD_TYPE`. Most CI pain lives in cross-platform details like this one, so **get CI green on your own platform first** and add the others as a stretch goal. Also check your branch filters: by default, workflows run on pushes to every branch.
 
-### Test Structure
-```cpp
-void test_basic_operations() {
-    assert(calculator::add(2, 3) == 5);
-    assert(approx_equal(calculator::add(2.5, 3.7), 6.2));
-    std::cout << "✅ Basic operations passed!\n";
-}
-```
-
-### Floating-Point Testing
-```cpp
-bool approx_equal(double a, double b, double epsilon = 1e-9) {
-    return std::abs(a - b) < epsilon;
-}
-```
-
-## CMake Features
-
-### Simple Configuration
-- **No external dependencies** - Just standard C++
-- **CTest integration** - Built-in test runner
-- **Debug builds** - Compiler warnings and debug symbols
-
-### Available Targets
-```bash
-# Build everything
-cmake --build .
-
-# Build only main app
-cmake --build . --target calculator
-
-# Build only tests
-cmake --build . --target test_calculator
-
-# Run tests via CMake
-cmake --build . --target run_tests
-```
+**Follow-up**: How would you run this workflow locally, without pushing?
 
 ## Troubleshooting
-
-### Build Issues
-- Ensure CMake 3.16+ is installed
-- Check C++17 compiler support
-
-### Test Failures
-- Look for assertion failures with file/line numbers
-- Check floating-point comparisons use `approx_equal()`
-- Ensure debug build (assertions disabled in release with `NDEBUG`)
+- **Tests "pass" but check nothing**: you built in Release, where `NDEBUG` disables `assert`.
+- **Build errors**: you need CMake 3.16+ and a C++17 compiler.
 
 ---
 
-**Next Steps**: Try adding new operations (modulo, power) and corresponding tests!
-
+**Next Steps**: Add modulo and power operations, with tests.

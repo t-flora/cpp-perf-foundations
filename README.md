@@ -36,38 +36,44 @@ git checkout -b solutions upstream/main
 ```
 cpp-foundations/
 ├── README.md                 # This file
-├── CMakeLists.txt           # Root CMake file
 ├── .github/
 │   └── workflows/
-│       └── ci.yml           # GitHub Actions CI
+│       └── day1-ci.yml      # GitHub Actions CI for Day 1
 ├── day1-cmake-ci/
 │   ├── README.md
 │   ├── CMakeLists.txt
+│   ├── build_and_test.sh
 │   ├── src/
-│   │   ├── calculator.h
-│   │   ├── calculator.cpp
+│   │   ├── CMakeLists.txt
+│   │   ├── calculator.hpp
 │   │   └── main.cpp
 │   └── tests/
+│       ├── CMakeLists.txt
 │       └── test_calculator.cpp
 ├── day2-header-library/
 │   ├── README.md
 │   ├── CMakeLists.txt
 │   ├── include/
-│   │   └── vector_math/
-│   │       └── vector_math.h
-│   ├── examples/
-│   │   └── example_usage.cpp
+│   │   └── vec3/
+│   │       └── vec3.hpp
+│   ├── benchmarks/
+│   │   └── simple_benchmark.cpp
 │   └── tests/
-│       └── test_vector_math.cpp
+│       └── test_vec3_basics.cpp
 ├── day3-docker-benchmarks/
 │   ├── README.md
 │   ├── CMakeLists.txt
 │   ├── Dockerfile
 │   ├── run_benchmarks.sh
-│   ├── src/
-│   │   └── sorting_benchmarks.cpp
+│   ├── include/
+│   │   └── sorting/
+│   │       └── sorting.hpp
+│   ├── benchmarks/
+│   │   └── bench_sorting.cpp
+│   ├── tests/
+│   │   └── test_sorting.cpp
 │   └── results/
-│       └── .gitkeep
+│       └── ANALYSIS.md
 ├── day4-container-performance/
 │   ├── README.md
 │   ├── CMakeLists.txt
@@ -102,92 +108,107 @@ cpp-foundations/
 ## Project Overview
 
 ### Day 1: CMake + CI Hello World
-**Goal**: Master the build system that every C++ project uses
+**Goal**: Master the build system every C++ project uses
 
-**What You'll Build**: Simple calculator library with multiple source files
-- `calculator.h/cpp` with add/subtract/multiply/divide functions
-- `main.cpp` that demonstrates library usage
-- CMake configuration for library and executable
-- GitHub Actions CI pipeline for Linux/macOS
-- clang-format integration for code style
+**What You'll Build**: A small calculator library, a demo executable, and a CI pipeline that builds and tests both
+- `calculator` library with add/subtract/multiply/divide (header-only or `.h`/`.cpp`, your call)
+- `main.cpp` demo, plus a test executable registered with CTest
+- Target-based CMake: one library target that the executables link against
+- GitHub Actions workflow that builds and tests on your platform
 
-**Skills Gained**: 
-- CMake basics (targets, linking, dependencies)
-- CI/CD setup with GitHub Actions
-- Professional C++ project structure
-- Code formatting and style consistency
+*If time permits*:
+- Extend the CI matrix to Linux, macOS, and Windows
+- Run the workflow locally with [act](https://github.com/nektos/act)
+- Add a `.clang-format` and check formatting in CI
+
+**Skills Gained**:
+- CMake targets, linking, and usage requirements
+- CI with GitHub Actions
+- Project layout and consistent code style
 
 **Essential Reading** (2-3 hours before coding):
-- [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/) - Official tutorial, focus on steps 1-4
-- [Modern CMake Practices](https://cliutils.gitlab.io/modern-cmake/chapters/basics.html) - Modern target-based approach
-- [GitHub Actions CMake Workflow](https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml) - Working starter template
+- [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/) - Official tutorial, steps 1-4
+- [Modern CMake: The Basics](https://cliutils.gitlab.io/modern-cmake/basics) - Target-based CMake
+- [GitHub Actions CMake Workflow](https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml) - Starter template
 - [CMake Template Project](https://github.com/cpp-best-practices/cmake_template) - Complete example with CI
 
-**Why it matters**: Every real C++ project needs this foundation. Without solid build systems, you can't collaborate or deploy code professionally in any high-performance domain.
+**Why it matters**: Every real C++ project starts here. Without a reliable build and CI, you can't collaborate on or ship code.
 
 ---
 
 ### Day 2: Header-Only Math Library
 **Goal**: Understand how modern C++ libraries are distributed
 
-**What You'll Build**: Vector/matrix operations library for 2D/3D vectors
-- Single header file with templated vector operations
-- Example usage demonstrating the API
-- CMake export files for easy integration
+**What You'll Build**: A templated 3D vector type, `Vec3<T>`, in a single header
+- Arithmetic operators, `dot`, `cross`, `length`, `normalized`, `constexpr` wherever possible
+- Tests, including `static_assert`s that prove operations evaluate at compile time
+- An `INTERFACE` CMake target with install/export rules, and a small consumer project that uses it through `find_package(vec3)`
+- A naive `std::chrono` timing loop over your operations. Note what makes it unreliable; Day 3 replaces it
 
 *If time permits*:
-- Documentation with usage examples
-- A few unit tests with Google Test
+- Expression templates for chains like `a + b + c`; compare the assembly on Compiler Explorer
+- Switch the tests to Google Test
 
 **Skills Gained**:
-- Template programming fundamentals
-- Header-only library design patterns
-- Package management and distribution
+- Templates and `constexpr`
+- Header-only library design and CMake packaging
 - API design principles
 
 **Essential Reading** (2-3 hours before coding):
-- [Effective Modern C++ - Item 30](https://www.oreilly.com/library/view/effective-modern-c/9781491908419/) - Perfect forwarding for template performance
-- [Expression Templates Explained (ModernesCpp)](https://www.modernescpp.com/index.php/expression-templates) - Eliminating temporary objects in mathematical operations
-- [C++ Reference: constexpr specifier](https://en.cppreference.com/w/cpp/language/constexpr) - Compile-time computation fundamentals
+- [Effective Modern C++ - Item 30](https://www.oreilly.com/library/view/effective-modern-c/9781491908419/) - Perfect forwarding and where it breaks
+- [Expression Templates Explained (ModernesCpp)](https://www.modernescpp.com/index.php/expression-templates) - Removing temporaries from math expressions
+- [C++ Reference: constexpr specifier](https://en.cppreference.com/w/cpp/language/constexpr) - Compile-time computation
 - [Google Highway SIMD Library](https://github.com/google/highway) - Cross-platform vectorization basics
+- [API Design Principles](https://wiki.qt.io/API_Design_Principles) - Designing clean interfaces
 
 *Additional resources*:
-- [Modern C++ Header-Only Libraries](https://github.com/p-ranav/awesome-hpp) - Examples and best practices
+- [Modern C++ Header-Only Libraries](https://github.com/p-ranav/awesome-hpp) - Examples to learn from
 - [Google Test Primer](http://google.github.io/googletest/primer.html) - Testing fundamentals
-- [API Design Principles](https://wiki.qt.io/API_Design_Principles) - Creating clean interfaces
+- [Importing and Exporting Guide](https://cmake.org/cmake/help/latest/guide/importing-exporting/index.html) - Making `find_package` work for your library
 
+**Tools for quick performance checks**:
+- [Compiler Explorer](https://godbolt.org/) - See the assembly your code produces
+- [Quick Bench](https://quick-bench.com/) - Online benchmarking for snippets
+- [C++ Insights](https://cppinsights.io/) - See what templates instantiate to
 
-**Tools to for quick performance scans**:
-- [Compiler Explorer](https://godbolt.org/) - See assembly output from your optimizations
-- [Quick Bench](https://quick-bench.com/) - Online benchmarking for code snippets
-- [C++ Insights](https://cppinsights.io/) - Understand template instantiation
-
-**Why it matters**: Most high-performance C++ libraries are header-only for optimal compilation and inlining. Understanding this pattern is essential for systems programming.
+**Why it matters**: Many high-performance libraries (Eigen, GLM, much of Boost) are header-only: the compiler sees every definition, so it can inline and optimize across calls. You'll use libraries like this constantly, and eventually write them.
 
 ---
 
 ### Day 3: Containerized Benchmark Runner
-**Goal**: Learn Docker + performance measurement
+**Goal**: Measure performance correctly, and make the measurements reproducible with Docker
 
-**What You'll Build**: Benchmark suite comparing sorting algorithms
-- Performance comparison of std::sort vs quicksort vs radix sort
-- Google Benchmark integration with proper statistical analysis
-- Multi-stage Dockerfile (separate build and runtime stages)
-- Automated script to run containers and export results
-- Performance graphs and analysis
+**What You'll Build**: A Google Benchmark suite comparing sorting algorithms, packaged in a multi-stage Docker image
+- Warm-up: port your Day 2 `chrono` loop to Google Benchmark and explain why the numbers differ
+- Your own quicksort and LSD radix sort, tested for correctness against `std::sort`
+- Benchmarks across sizes (1K-1M elements) and input distributions (random, sorted, reversed, few unique), with repetitions and JSON output
+- Multi-stage Dockerfile: toolchain in the build stage, only the binary in the runtime stage
+- `run_benchmarks.sh`, which builds the image, runs it, and writes timestamped results to `results/`
+- A short `ANALYSIS.md` comparing the algorithms, and native vs. containerized runs
+
+*If time permits*:
+- Plot ns/element vs. size for each distribution
+- A CI job that builds the image and smoke-runs the benchmarks (never gate CI on timings)
 
 **Skills Gained**:
-- Docker containerization for C++ projects
-- Scientific performance measurement
-- Benchmark design and interpretation
-- CI integration with performance testing
+- Benchmark design: defeating the optimizer, controlling timers, repetitions
+- Reading results statistically instead of anecdotally
+- Multi-stage Docker builds for C++
+- Fetching dependencies with CMake `FetchContent`
 
 **Essential Reading** (2-3 hours before coding):
-- [Google Benchmark User Guide](https://github.com/google/benchmark/blob/main/docs/user_guide.md) - Focus on basic usage and avoiding optimization
-- [Docker Best Practices for C++](https://docs.docker.com/language/cpp/) - Multi-stage builds and optimization
-- [Performance Analysis Basics](https://easyperf.net/blog/2019/02/09/Top-Down-performance-analysis-methodology) - Understanding bottlenecks
+- [Google Benchmark User Guide](https://github.com/google/benchmark/blob/main/docs/user_guide.md) - Passing arguments, asymptotic complexity, controlling timers, preventing optimization, repetitions
+- [Reducing Variance](https://github.com/google/benchmark/blob/main/docs/reducing_variance.md) - Why your numbers jump around
+- [Tuning C++: Benchmarks, and CPUs, and Compilers! Oh My!](https://www.youtube.com/watch?v=nXaxk27zwlk) - Chandler Carruth, CppCon 2015; live benchmarking pitfalls
+- [Docker Multi-Stage Builds](https://docs.docker.com/build/building/multi-stage/) - Separating build and runtime images
 
-**Why it matters**: All modern high-performance systems run in containers, and performance measurement is critical for optimization decisions.
+*Additional resources*:
+- [Google Benchmark Tools](https://github.com/google/benchmark/blob/main/docs/tools.md) - `compare.py` for statistically comparing two runs
+- [Radix Sort Revisited](http://www.codercorner.com/RadixSortRevisited.htm) - Practical LSD radix sort for 32-bit keys
+- [CMake FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) - Pulling dependencies at configure time
+- [Docker C++ Guide](https://docs.docker.com/guides/cpp/) - Containerizing a C++ project end to end
+
+**Why it matters**: Optimization decisions are only as good as the measurements behind them. A number you can't reproduce on another machine, in CI, or next month is an anecdote. Benchmark discipline plus a pinned environment turns it into evidence.
 
 ---
 
@@ -267,29 +288,19 @@ cpp-foundations/
 ---
 
 ### Prerequisites
-- C++17 or later compiler (GCC 9+, Clang 10+, or MSVC 2019+)
+- A C++20 compiler (GCC 10+, Clang 12+, or MSVC 2019 16.10+); Day 1 only needs C++17
 - CMake 3.16+
 - Git
-- Docker (for Day 3)
-- Python 3.8+ with matplotlib (for Day 4 visualization)
+- Docker (Day 3)
+- Python 3.8+ with numpy and scipy (Day 3 `compare.py`) and matplotlib (Day 4 plots)
 
-### Building All Projects
-```bash
-git clone <your-repo-url>
-cd cpp-foundations
-mkdir build && cd build
-cmake ..
-make -j$(nproc)
-ctest  # Run all tests
-```
-
-### Building Individual Projects
+### Building a Project
+Each day is a standalone CMake project:
 ```bash
 cd day1-cmake-ci
-mkdir build && cd build
-cmake ..
-make
-./calculator_demo
+cmake -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+(cd build && ctest --verbose)
 ```
 
 ## Learning Progression
@@ -298,7 +309,7 @@ Each day builds on the previous:
 
 1. **Build Systems** → You can compile and distribute C++ code professionally
 2. **Header Libraries** → You understand modern C++ distribution patterns
-3. **Containers + Benchmarks** → You can measure and optimize performance
+3. **Containers + Benchmarks** → You can measure performance and trust the numbers
 4. **Data Structures** → You make informed choices about algorithms and containers
 5. **Stream Processing** → You can handle real-time data efficiently
 6. **Concurrency** → You understand thread safety and parallel processing fundamentals
