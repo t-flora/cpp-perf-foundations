@@ -1,0 +1,4 @@
+-P ubuntu-latest=ubuntu:22.04
+-P macos-latest=ubuntu:22.04  
+-P windows-latest=ubuntu:22.04
+--container-architecture linux/amd64 

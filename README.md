@@ -36,8 +36,11 @@ git checkout -b solutions upstream/main
 ```
 cpp-foundations/
 ├── README.md                 # This file
+├── .actrc                    # act config: run the GitHub Actions workflow locally
 ├── scripts/
-│   └── test_all.sh          # Build and test every day
+│   ├── test_all.sh          # Build and test every day
+│   ├── simulate-ci.sh       # Day 1 CI steps on your machine
+│   └── simulate-ci-docker.sh  # Day 1 CI steps in an Ubuntu container
 ├── .github/
 │   └── workflows/
 │       └── day1-ci.yml      # GitHub Actions CI for Day 1
