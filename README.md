@@ -1,4 +1,4 @@
-# C++ for High-Performance Engineering: 6-Day Foundational Project Series
+# C++ for High-Performance Engineering: 7-Day Foundational Project Series
 
 > **📚 Learning Resource**: This is the **template branch** containing project skeletons for learning.
 > 
@@ -108,18 +108,29 @@ cpp-foundations/
 │   │   └── bench_components.cpp
 │   └── results/
 │       └── ANALYSIS.md
-└── day6-concurrent-calculator/
+├── day6-concurrent-calculator/
+│   ├── README.md
+│   ├── CMakeLists.txt
+│   ├── include/
+│   │   └── concurrency/     # bounded_queue.hpp, thread_pool.hpp, workloads.hpp
+│   ├── tests/
+│   ├── examples/
+│   │   └── race_demo.cpp
+│   ├── benchmarks/
+│   │   └── bench_scaling.cpp
+│   ├── scripts/
+│   │   └── plot_scaling.py
+│   └── results/
+│       └── ANALYSIS.md
+└── day7-tcp-echo/
     ├── README.md
     ├── CMakeLists.txt
+    ├── Dockerfile
     ├── include/
-    │   └── concurrency/     # bounded_queue.hpp, thread_pool.hpp, workloads.hpp
+    │   └── net/             # socket.hpp, framing.hpp, echo_server.hpp
+    ├── src/                 # echo_server, echo_client, transport_probe
     ├── tests/
-    ├── examples/
-    │   └── race_demo.cpp
-    ├── benchmarks/
-    │   └── bench_scaling.cpp
-    ├── scripts/
-    │   └── plot_scaling.py
+    ├── scripts/             # run_experiments.py, plot_results.py
     └── results/
         └── ANALYSIS.md
 ```
@@ -340,12 +351,49 @@ cpp-foundations/
 
 ---
 
+### Day 7: TCP Echo Server and Load Generator
+**Goal**: Learn socket programming, and find out what a network round trip costs before the network is even involved
+
+**What You'll Build**: A length-prefixed echo server and a client that measures it
+- A small RAII socket layer: listen, accept, connect, `send_all` (partial writes), `recv_exact` (partial reads)
+- Length-prefixed framing, with a decoder that reassembles messages from however TCP splits them, and refuses absurd lengths
+- An echo server with a thread per connection, and a clean `stop()`
+- A load generator: N connections, each with D requests in flight, reporting throughput and p50/p99/p99.9 round-trip time
+- Experiments: message size, Nagle's algorithm × split writes, pipelining depth, and connection count, on two OSes (native and in Docker)
+
+*If time permits*:
+- A single-threaded `poll()` server, and a comparison with thread per connection as connections grow
+- A probe comparing pipe, Unix-socket, and TCP round trips, blocking vs. spinning, to find where the time goes
+- Run the client on a second machine and see what a real network adds
+
+**Skills Gained**:
+- POSIX sockets: `socket`, `bind`, `listen`, `accept`, `connect`, `send`, `recv`, `poll`, socket options
+- Message framing over a byte stream, and defensive parsing of untrusted input
+- Nagle's algorithm, delayed ACKs, and `TCP_NODELAY`
+- Latency vs. throughput: pipelining, Little's law, coordinated omission
+- Blocking vs. event-driven server design, and backpressure
+
+**Essential Reading** (2-3 hours before coding):
+- [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/) - Chapters 1-6 (sockets through a working client and server), plus 7.2 (`poll()`), 7.4 (partial `send()`s), and 7.6 (framing your messages)
+- [Nagle's algorithm](https://en.wikipedia.org/wiki/Nagle%27s_algorithm) - Including its interaction with delayed ACKs
+- [High Performance Browser Networking, Chapter 2](https://hpbn.co/building-blocks-of-tcp/) - TCP's building blocks: handshakes, flow control, slow start, head-of-line blocking
+
+*Additional resources*:
+- [The C10K Problem](http://www.kegel.com/c10k.html) - Why event loops exist
+- [How NOT to Measure Latency](https://www.youtube.com/watch?v=lJ8ydIuPFeU) - Gil Tene on coordinated omission and percentiles
+- [socket(7)](https://man7.org/linux/man-pages/man7/socket.7.html) and [tcp(7)](https://man7.org/linux/man-pages/man7/tcp.7.html) - Socket options on Linux
+- [UDP vs. TCP (HPBN, Chapter 3)](https://hpbn.co/building-blocks-of-udp/) - What you give up, and gain, without a connection
+
+**Why it matters**: Distributed systems, trading systems, and microservices all spend their latency budget on round trips. Knowing what a round trip costs on loopback, and which OS settings and write patterns multiply it, is what lets you tell a slow network from a slow program.
+
+---
+
 ### Prerequisites
 - A C++20 compiler (GCC 10+, Clang 12+, or MSVC 2019 16.10+); Day 1 only needs C++17
 - CMake 3.16+
 - Git
-- Docker (Day 3)
-- Python 3.8+ with numpy and scipy (Day 3 `compare.py`) and matplotlib (Day 4 and 6 plots); Day 5 needs only the standard library
+- Docker (Days 3 and 7)
+- Python 3.8+ with numpy and scipy (Day 3 `compare.py`) and matplotlib (Day 4, 6, and 7 plots); Days 5 and 7 otherwise need only the standard library
 
 ### Building a Project
 Each day is a standalone CMake project:
@@ -368,10 +416,11 @@ Each day builds on the previous:
 4. **Data Structures** → You make informed choices about algorithms and containers
 5. **Stream Processing** → You can process real-time data with predictable latency
 6. **Concurrency** → You can write thread-safe code and predict when parallelism pays off
+7. **Networking** → You can build a TCP service and explain where its latency goes
 
 ## Success Criteria
 
-After completing all 6 projects, you should be able to:
+After completing all 7 projects, you should be able to:
 - Set up a new C++ project with CMake and CI from scratch
 - Design and implement header-only libraries
 - Write and interpret performance benchmarks
