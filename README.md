@@ -9,6 +9,8 @@ A progressive series of one-day C++ projects designed to build the foundational 
 > ```
 > 
 > **For instructors/reference**: You're in the right place! This branch contains implementations.
+>
+> **Results**: [FINDINGS.md](FINDINGS.md) summarizes what each day's measurements showed.
 
 ## Branch Structure
 
@@ -36,6 +38,7 @@ git checkout -b solutions upstream/main
 ```
 cpp-foundations/
 ├── README.md                 # This file
+├── FINDINGS.md               # What the measurements showed, across all days
 ├── .actrc                    # act config: run the GitHub Actions workflow locally
 ├── scripts/
 │   ├── test_all.sh          # Build and test every day
