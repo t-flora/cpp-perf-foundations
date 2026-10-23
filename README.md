@@ -111,14 +111,17 @@ cpp-foundations/
 └── day6-concurrent-calculator/
     ├── README.md
     ├── CMakeLists.txt
-    ├── src/
-    │   ├── thread_pool.h
-    │   ├── concurrent_calculator.cpp
-    │   └── benchmark_concurrency.cpp
+    ├── include/
+    │   └── concurrency/     # bounded_queue.hpp, thread_pool.hpp, workloads.hpp
     ├── tests/
-    │   └── test_thread_safety.cpp
-    └── scripts/
-        └── plot_scaling.py
+    ├── examples/
+    │   └── race_demo.cpp
+    ├── benchmarks/
+    │   └── bench_scaling.cpp
+    ├── scripts/
+    │   └── plot_scaling.py
+    └── results/
+        └── ANALYSIS.md
 ```
 
 ## Project Overview
@@ -301,30 +304,39 @@ cpp-foundations/
 ---
 
 ### Day 6: Concurrent Task Processor
-**Goal**: Learn thread safety and parallel processing fundamentals
+**Goal**: Write thread-safe building blocks, and measure what parallelism actually buys
 
-**What You'll Build**: Multi-threaded mathematical computation system
-- Thread pool for distributing CPU-intensive calculations
-- Thread-safe queue using std::mutex and std::condition_variable
-- Parallel processing of mathematical operations (matrix multiplication, prime finding)
-- Benchmark comparing single-threaded vs multi-threaded performance
-- Proper synchronization and resource management
+**What You'll Build**: A thread pool on a bounded blocking queue, tested under ThreadSanitizer, then used for scaling and contention experiments
+- A multi-producer, multi-consumer `BoundedQueue` (`std::mutex` + `std::condition_variable`) with backpressure and a clean `close()` shutdown
+- A `ThreadPool` whose `submit()` returns a `std::future` (results and exceptions cross threads), plus `parallel_for`
+- Thread-safety tests: every item delivered exactly once under many producers and consumers, blocking and wakeup behavior, shutdown that drains the queue
+- Scaling benchmarks: a compute-bound workload (prime counting, static vs. dynamic partitioning) vs. a memory-bound one (summing 256 MB)
+- Contention benchmarks: a mutex, a shared atomic, and per-thread counters with and without cache-line padding
+
+*If time permits*:
+- Sweep the `parallel_for` grain size and find where queue overhead starts to dominate
+- Move Day 5's snapshot output to a writer thread through your queue, and re-measure p99.99
 
 **Skills Gained**:
-- std::thread, std::mutex, std::condition_variable
-- Thread pool design patterns
-- Race condition prevention
-- Lock-free data structures (std::atomic basics)
-- Scalability measurement and analysis
+- `std::thread`, `std::mutex`, `std::condition_variable`, `std::future`
+- Thread pool design, shutdown, and exception propagation
+- Finding data races with ThreadSanitizer
+- Reading scaling curves: load balance, memory bandwidth, false sharing, Amdahl's law
 
 **Essential Reading** (2-3 hours before coding):
-- (Paid textbook) [C++ Concurrency in Action - Chapter 2](https://www.manning.com/books/c-plus-plus-concurrency-in-action-second-edition) - Managing threads
-- [Thread Pool Tutorial](https://en.cppreference.com/w/cpp/thread) - Basic threading primitives
-- [Condition Variables in C++](https://www.geeksforgeeks.org/cpp/cpp-multithreading-condition-variables/) - Synchronization fundamentals
-- [std::atomic Basics](https://en.cppreference.com/w/cpp/atomic/atomic) - Lock-free programming introduction
-- [Core Guidelines - CP](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-concurrency) - Best practices from Core Guidelines
+- (Paid textbook) [C++ Concurrency in Action - Chapters 2-4](https://www.manning.com/books/c-plus-plus-concurrency-in-action-second-edition) - Managing threads, sharing data, synchronizing with condition variables and futures
+- [Concurrency Support Library (cppreference)](https://en.cppreference.com/w/cpp/thread) - Threads, mutexes, condition variables, futures
+- [C++ Atomics, From Basic to Advanced](https://www.youtube.com/watch?v=ZQFzMfHIxng) - Fedor Pikus, CppCon 2017; what atomics really cost
+- [Core Guidelines - Concurrency](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-concurrency) - Rules worth following from day one
 
-**Why it matters**: High-performance systems are inherently concurrent - data processing, task scheduling, and resource management all happen in parallel. Understanding thread safety is essential for scalable systems.
+*Additional resources*:
+- [Better Code: Concurrency](https://www.youtube.com/watch?v=zULU6Hhp42w) - Sean Parent; tasks over raw threads and locks
+- [ThreadSanitizer](https://clang.llvm.org/docs/ThreadSanitizer.html) - How to run it and read its reports
+- [std::hardware_destructive_interference_size](https://en.cppreference.com/w/cpp/thread/hardware_destructive_interference_size) - The standard's answer to "how much padding?" (check it against your hardware)
+- [Amdahl's Law](https://en.wikipedia.org/wiki/Amdahl%27s_law) - Why speedup curves flatten
+- [atomic Weapons](https://www.youtube.com/watch?v=A8eCGOqgvH4) - Herb Sutter; the memory model in depth
+
+**Why it matters**: More cores only help when the work divides evenly, the data doesn't fight over cache lines, and the bottleneck is compute rather than memory. Thread-safe building blocks and the measurements to check those three things are what separate "it's multithreaded" from "it's faster".
 
 ---
 
@@ -333,7 +345,7 @@ cpp-foundations/
 - CMake 3.16+
 - Git
 - Docker (Day 3)
-- Python 3.8+ with numpy and scipy (Day 3 `compare.py`) and matplotlib (Day 4 plots)
+- Python 3.8+ with numpy and scipy (Day 3 `compare.py`) and matplotlib (Day 4 and 6 plots); Day 5 needs only the standard library
 
 ### Building a Project
 Each day is a standalone CMake project:
@@ -355,7 +367,7 @@ Each day builds on the previous:
 3. **Containers + Benchmarks** → You can measure performance and trust the numbers
 4. **Data Structures** → You make informed choices about algorithms and containers
 5. **Stream Processing** → You can process real-time data with predictable latency
-6. **Concurrency** → You understand thread safety and parallel processing fundamentals
+6. **Concurrency** → You can write thread-safe code and predict when parallelism pays off
 
 ## Success Criteria
 
