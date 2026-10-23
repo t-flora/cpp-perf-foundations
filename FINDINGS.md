@@ -7,11 +7,12 @@ What the measurements showed, day by day, and the lessons that kept coming back.
 1. **The compiler deletes work you don't protect.** Day 2's naive benchmark timed a hoisted result, not the operation (add looked 4× slower than it is). Day 6's data race compiled into one store per thread, so the "counter" ended at exactly 1,000,000 of 4,000,000. Use `DoNotOptimize`, and treat a data race as undefined behaviour, not a small error.
 2. **The branch predictor memorizes repeated inputs.** Re-sorting the same 1024-element array was 4.7× faster than sorting fresh ones (Day 3), and Day 4's builds came out 2–4× too cheap the same way. Every benchmark that consumes its input since then cycles through ~1M elements of distinct inputs.
 3. **Memory layout beats asymptotic complexity.** `vector` iteration is 217× faster than `map` at 1M (Day 4). Sorted insertion into a `vector` beats `list` by 16× despite the O(n) shift. A sorted vector beats `map` with the same O(log n) comparisons. Contention is a layout problem too: counters 8 bytes apart are as slow as one shared counter (Day 6).
-4. **Attribute a difference before explaining it.** "Docker is 68% slower" (Day 3) blended three causes: the compiler (quicksort), the allocator returning memory to a VM (radix sort at 256K), and something unresolved (radix at 1M). Day 5's end-to-end speedup was split into component benchmarks that add up to the measured per-record cost.
+4. **Attribute a difference before explaining it.** "Docker is 68% slower" (Day 3) blended three causes: the compiler (quicksort), the allocator returning memory to a VM (radix sort at 256K), and something unresolved (radix at 1M). Day 5's end-to-end speedup was split into component benchmarks that add up to the measured per-record cost. Day 7's loopback round trips were slow on both systems for unrelated reasons, found by comparing TCP against pipes and Unix sockets, blocking against spinning.
 5. **Check the model, then find what's left over.** A √n cost model predicted static partitioning at 2.85× on 4 threads; measured 2.92× (Day 6). Fitted complexity matched theory except where a fixed per-call cost bent the curve (Day 3).
 6. **Measurement has a resolution and a cost.** `steady_clock` ticks every 41.7 ns on Apple silicon, and two reads cost a quarter of a fast record's processing (Day 5). `PauseTiming` adds ~1 µs, more than the 10 ns it excludes at small N (Day 3).
 7. **Tails come from rare, expensive events, and the max is the OS.** p99.99 is where flushes, snapshots, and buffer growth show up. The max varied from 71 µs to 14 ms across identical runs (Day 5).
-8. **Report what you can't explain.** Two reproducible dips in Day 6 (mutex at 3 threads, atomic at 6) and radix sort at 1M under Docker (Day 3) are open. Calling them noise was wrong once already.
+8. **Benchmark on the platform you deploy on.** The Nagle/delayed-ACK stall costs 41 ms per request on Linux and doesn't happen on macOS (Day 7). The 64-byte padding the standard library suggests is too small for an M2 (Day 6). Docker on a Mac is a VM, with its own page-fault and wakeup costs (Days 3 and 7).
+9. **Report what you can't explain.** Two reproducible dips in Day 6 (mutex at 3 threads, atomic at 6), radix sort at 1M under Docker (Day 3), and the source of macOS's TCP cost (Day 7) are open. Calling them noise was wrong once already.
 
 ## By Day
 
@@ -45,3 +46,11 @@ What the measurements showed, day by day, and the lessons that kept coming back.
 - `hardware_destructive_interference_size` is 64 in libc++, but 64-byte padding loses 18% to 128-byte padding once threads span both clusters.
 - All tests clean under ThreadSanitizer; the race demo is caught.
 - Open: mutex throughput halves at 3 threads, and the atomic dips at 6. Both reproduce.
+
+### Day 7: TCP Echo ([ANALYSIS](day7-tcp-echo/results/ANALYSIS.md))
+- A loopback round trip costs 75–84 µs on macOS but 4.6 µs over a Unix socket. On macOS, TCP `send()` itself takes 17.7 µs (0.54 µs for a Unix socket), and delivery afterwards is shared system-wide: ~30K round trips/s total, whatever the server design or pipelining depth. Suspect: the Cisco Secure Client socket filter installed on this machine; unconfirmed.
+- In the Linux VM, TCP costs only ~2 µs over a Unix socket, but every *blocking* wakeup costs ~40 µs, even through a pipe. Latency *drops* under load (50 → 8 µs with 8 connections) because busy vCPUs never sleep.
+- Nagle + header and payload in two writes: 41 ms per round trip on Linux (850×, delayed-ACK timer), no stall on macOS. Fix: `TCP_NODELAY`, or one write per message.
+- Little's law held exactly for pipelining: 128 in flight / 371K round trips/s = 345 µs predicted, 339 µs measured. Past the throughput plateau, extra depth only adds queueing.
+- Linux: a single-threaded `poll()` server plateaus at ~90K round trips/s (one core); thread per connection reaches 711K. Event loops buy connection count, not per-connection speed.
+- Payload size is free up to 4 KB on both systems. A 1 MB echo is 6× faster on Linux (2.6 GiB/s vs. 441 MiB/s).
