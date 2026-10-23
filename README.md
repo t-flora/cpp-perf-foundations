@@ -28,8 +28,11 @@ The layout you will end up with (this branch ships only briefs and starter skele
 ```
 cpp-foundations/
 ├── README.md                 # This file
+├── .actrc                    # act config: run the GitHub Actions workflow locally
 ├── scripts/
-│   └── test_all.sh          # Build and test every day
+│   ├── test_all.sh          # Build and test every day
+│   ├── simulate-ci.sh       # Day 1 CI steps on your machine
+│   └── simulate-ci-docker.sh  # Day 1 CI steps in an Ubuntu container
 ├── .github/
 │   └── workflows/
 │       └── day1-ci.yml      # GitHub Actions CI for Day 1
@@ -92,12 +95,19 @@ cpp-foundations/
 ├── day5-realtime-processor/
 │   ├── README.md
 │   ├── CMakeLists.txt
+│   ├── include/
+│   │   └── stream/          # trade parsing, ring buffer, window, histogram, pipelines
 │   ├── src/
-│   │   └── market_data_processor.cpp
+│   │   └── processor.cpp
+│   ├── scripts/
+│   │   └── generate_trades.py
 │   ├── data/
 │   │   └── sample_trades.csv
-│   └── tests/
-│       └── test_vwap.cpp
+│   ├── tests/
+│   ├── benchmarks/
+│   │   └── bench_components.cpp
+│   └── results/
+│       └── ANALYSIS.md
 └── day6-concurrent-calculator/
     ├── README.md
     ├── CMakeLists.txt
@@ -255,26 +265,40 @@ cpp-foundations/
 ---
 
 ### Day 5: Real-Time Data Processor
-**Goal**: Handle streaming data efficiently
+**Goal**: Process a stream record by record, with bounded memory and predictable latency
 
-**What You'll Build**: Mock data processor with real-time analytics
-- Parse CSV stream of data records (timestamp, identifier, value, quantity)
-- Calculate moving averages and other windowed statistics per identifier
-- Implement sliding window calculations using ring buffers
-- Output real-time results with configurable update frequency
-- Handle data validation and error cases
+**What You'll Build**: A trade-stream processor that keeps per-symbol sliding-window statistics, in two versions with identical output
+- A CSV parser for `timestamp_ns,symbol,price,quantity` that rejects malformed and late records, counting each reason
+- A fixed-capacity ring buffer and a time-based sliding window with O(1) VWAP and moving average, using integer prices so the running sums are exact
+- Event-time snapshots of every active symbol at a configurable interval
+- A *naive* pipeline (`getline`, `stod`, `std::map`, `std::deque`, `std::endl`) and a *fast* one (`string_view`, `from_chars`, interned ids, ring buffer, batched output), tested to produce byte-identical output
+- Per-record latency percentiles (p50 to p99.99) from an allocation-free histogram, plus component benchmarks that explain the difference
+
+*If time permits*:
+- Sliding-window high/low in O(1) amortized, with a monotonic queue
+- Accept late records within an allowed lateness instead of rejecting them
 
 **Skills Gained**:
-- Stream processing patterns
-- Circular buffers and windowed calculations
-- Real-time analytics concepts
-- Real-time system design principles
+- Stream processing: event time, windows, late data
+- Ring buffers and allocation-free hot paths
+- Fast, strict parsing with `std::from_chars`
+- Measuring latency distributions, and the limits of your clock
 
 **Essential Reading** (2-3 hours before coding):
-- [Circular Buffer Implementation](https://www.embedded.com/ring-buffer-basics/) - Lock-free ring buffer concepts
-- [VWAP Calculation](https://www.investopedia.com/terms/v/vwap.asp) - Understanding volume-weighted average price
-- [Stream Processing Patterns](https://www.oreilly.com/radar/the-world-beyond-batch-streaming-101/) - Real-time data processing fundamentals
-- [CSV Parsing in C++](https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c) - Efficient file processing techniques
+- [How NOT to Measure Latency](https://www.youtube.com/watch?v=lJ8ydIuPFeU) - Gil Tene; why averages lie and percentiles matter
+- [Streaming 101](https://www.oreilly.com/radar/the-world-beyond-batch-streaming-101/) - Tyler Akidau; event time vs. processing time, windows
+- [I've Been Writing Ring Buffers Wrong All These Years](https://www.snellman.net/blog/archive/2016-12-13-ring-buffers/) - Power-of-two capacity and index masking
+- [std::from_chars (cppreference)](https://en.cppreference.com/w/cpp/utility/from_chars) - Locale-free, allocation-free number parsing
+
+*Additional resources*:
+- [When a Microsecond Is an Eternity](https://www.youtube.com/watch?v=NH1Tta7purM) - Carl Cook, CppCon 2017; low-latency C++ in trading systems
+- [Volume-Weighted Average Price](https://en.wikipedia.org/wiki/Volume-weighted_average_price) - The statistic you're computing
+- [HdrHistogram](http://hdrhistogram.org/) - The design your latency histogram simplifies
+- [Minimum Queue](https://cp-algorithms.com/data_structures/stack_queue_modification.html) - For the sliding-window high/low stretch goal
+
+**Why it matters**: Real-time systems are judged by their worst moments, not their averages. A stream processor with a great mean and a 100 µs hiccup every thousand records will miss exactly the events that matter, and only percentile measurements show it.
+
+---
 
 ### Day 6: Concurrent Task Processor
 **Goal**: Learn thread safety and parallel processing fundamentals
@@ -330,7 +354,7 @@ Each day builds on the previous:
 2. **Header Libraries** → You understand modern C++ distribution patterns
 3. **Containers + Benchmarks** → You can measure performance and trust the numbers
 4. **Data Structures** → You make informed choices about algorithms and containers
-5. **Stream Processing** → You can handle real-time data efficiently
+5. **Stream Processing** → You can process real-time data with predictable latency
 6. **Concurrency** → You understand thread safety and parallel processing fundamentals
 
 ## Success Criteria
