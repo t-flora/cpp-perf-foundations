@@ -1,0 +1,89 @@
+name: CI
+
+# Every day's tests on Linux and macOS, a brief run of every program, the concurrent code
+# under ThreadSanitizer, both Docker images, and the template branch checked against this one.
+# Timings are never checked: shared runners are too noisy for that.
+
+on:
+  push:
+    branches-ignore: [template] # the template branch has no workflows; the template job covers it
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1" # weekly: catches runner-image changes, and template-only pushes
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests and smoke runs (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and test every day
+        run: scripts/test_all.sh
+      - name: Run every benchmark and program briefly
+        run: scripts/smoke_all.sh
+
+  tsan:
+    name: ThreadSanitizer (Days 6 and 7)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      # Newer kernels randomize mmap addresses more than TSan's shadow-memory layout allows
+      - name: Lower ASLR entropy for TSan
+        run: sudo sysctl vm.mmap_rnd_bits=28
+      - name: Day 6
+        run: |
+          cmake -S day6-concurrent-calculator -B build/tsan/day6 -DDAY6_TSAN=ON
+          cmake --build build/tsan/day6 --parallel
+          ctest --test-dir build/tsan/day6 --output-on-failure
+      - name: Day 7
+        run: |
+          cmake -S day7-tcp-echo -B build/tsan/day7 -DDAY7_TSAN=ON
+          cmake --build build/tsan/day7 --parallel
+          ctest --test-dir build/tsan/day7 --output-on-failure
+
+  docker:
+    name: Docker images (Days 3 and 7)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      # Both images run ctest while building, so a failing test fails the build
+      - name: Day 3
+        run: docker build -t day3-sorting-bench day3-docker-benchmarks
+      - name: Day 7
+        run: docker build -t day7-tcp-echo day7-tcp-echo
+
+  template:
+    name: Template branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      # Work on branch X pairs with X-template, as dayN does with dayN-template
+      - name: Pick the template branch to check
+        id: pick
+        run: |
+          branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          ref=template
+          if git ls-remote --exit-code --heads origin "$branch-template" > /dev/null; then
+            ref="$branch-template"
+          fi
+          echo "Checking $ref"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pick.outputs.ref }}
+          path: template-branch
+      - name: Check it against this branch
+        run: scripts/check_template.sh template-branch

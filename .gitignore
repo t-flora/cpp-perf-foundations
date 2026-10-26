@@ -4,3 +4,5 @@ untracked-proposals/*
 *build/*
 # ignore all vscode directories
 .vscode/*
+# Python bytecode from the scripts
+__pycache__/

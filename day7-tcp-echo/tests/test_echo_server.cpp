@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <csignal>
+#include <cstdio>
 #include <random>
 #include <string>
 #include <thread>
@@ -93,7 +94,12 @@ void run_suite(net::ServerMode mode, const std::string& name) {
     {
         net::Fd idle1 = net::connect_tcp("127.0.0.1", port);
         net::Fd idle2 = net::connect_tcp("127.0.0.1", port);
-        std::this_thread::sleep_for(std::chrono::milliseconds(50)); // let the server accept them
+        // Every connection this suite opened, idle ones included
+        constexpr std::size_t kConnections = 1 + 1 + 8 + 1 + 1 + 1 + 2;
+        // Let the server accept them. A fixed sleep would be flaky on a slow machine or under TSan
+        const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+        while (server.connections_accepted() < kConnections && std::chrono::steady_clock::now() < deadline)
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         const auto t0 = std::chrono::steady_clock::now();
         server.stop();
         const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0);
@@ -106,15 +112,23 @@ void run_suite(net::ServerMode mode, const std::string& name) {
             closed = true;
         }
         check(closed, name + ": stop() closed client connections");
-        check(server.connections_accepted() == 1 + 1 + 8 + 1 + 1 + 1 + 2, name + ": accepted every connection");
+        check(server.connections_accepted() == kConnections, name + ": accepted every connection");
     }
 }
 
 } // namespace
 
-int main() {
+// Usage: test_echo_server [threads] [poll]   (default: both)
+int main(int argc, char** argv) {
     std::signal(SIGPIPE, SIG_IGN);
-    run_suite(net::ServerMode::threads, "threads");
-    run_suite(net::ServerMode::poll, "poll");
+    std::vector<std::string> modes(argv + 1, argv + argc);
+    if (modes.empty()) modes = {"threads", "poll"};
+    for (const auto& m : modes) {
+        if (m != "threads" && m != "poll") {
+            std::fprintf(stderr, "unknown mode: %s\n", m.c_str());
+            return 2;
+        }
+        run_suite(m == "poll" ? net::ServerMode::poll : net::ServerMode::threads, m);
+    }
     return test::finish("test_echo_server");
 }

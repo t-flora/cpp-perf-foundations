@@ -1,6 +1,10 @@
 # C++ for High-Performance Engineering: 7-Day Foundational Project Series
 
 A progressive series of one-day C++ projects designed to build the foundational skills needed for high-performance systems development. Each project introduces essential concepts while building toward the competence required for high-performance engineering. Some of these projects may take longer than a day, and that's fine!
+
+<!-- main-only -->
+<!-- Both branches share this README: scripts/template_sync.py renders the template branch's
+copy, dropping main-only blocks and keeping template-only ones. Edit it here, on main. -->
 > **Complete Solutions**: This is the **main branch** containing project implementations.
 > 
 > **For learners**: Clone the template branch to get started:
@@ -32,21 +36,52 @@ git remote add upstream https://github.com/t-flora/cpp-perf-foundations.git
 git fetch upstream main
 git checkout -b solutions upstream/main
 ```
+<!-- /main-only -->
+<!-- template-only
+> **📚 Learning Resource**: This is the **template branch** containing project skeletons for learning.
+>
+> **For learners**: You're in the right place! This branch contains empty project templates to work with.
+>
+> **For instructors/reference**: Switch to the `main` branch to see complete solutions:
+> ```bash
+> git checkout main
+> ```
+
+## Getting Started
+
+**Clone this template branch to start learning**:
+```bash
+git clone -b template https://github.com/t-flora/cpp-perf-foundations.git
+cd cpp-perf-foundations
+```
+
+**Or if you already cloned, switch to template branch**:
+```bash
+git checkout template
+```
+-->
 
 ## Repository Structure
+<!-- template-only
+The layout you will end up with (this branch ships only briefs and starter skeletons):
+-->
 
 ```
 cpp-foundations/
 ├── README.md                 # This file
-├── FINDINGS.md               # What the measurements showed, across all days
-├── .actrc                    # act config: run the GitHub Actions workflow locally
+├── FINDINGS.md               # What the measurements showed, across all days (main branch)
+├── .actrc                    # act config: run the Day 1 workflow locally (main branch)
 ├── scripts/
-│   ├── test_all.sh          # Build and test every day
-│   ├── simulate-ci.sh       # Day 1 CI steps on your machine
-│   └── simulate-ci-docker.sh  # Day 1 CI steps in an Ubuntu container
+│   ├── test_all.sh           # Build and test every day
+│   ├── smoke_all.sh          # Run every benchmark and program briefly (main branch)
+│   ├── check_template.sh     # Check the template branch against main (main branch)
+│   ├── template_sync.py      # Render the template's README and reference tests (main branch)
+│   ├── simulate-ci.sh        # Day 1 CI steps on your machine (main branch)
+│   └── simulate-ci-docker.sh # Day 1 CI steps in an Ubuntu container (main branch)
 ├── .github/
 │   └── workflows/
-│       └── day1-ci.yml      # GitHub Actions CI for Day 1
+│       ├── day1-ci.yml       # GitHub Actions CI for Day 1
+│       └── ci.yml            # Every day on Linux and macOS, TSan, template checks (main branch)
 ├── day1-cmake-ci/
 │   ├── README.md
 │   ├── CMakeLists.txt
@@ -416,6 +451,13 @@ cmake --build build
 ```
 
 `scripts/test_all.sh` builds and tests every day (or only the ones you name) in `build/<day>/`.
+<!-- main-only -->
+`scripts/smoke_all.sh` then runs every benchmark, the Day 5 processor, and the Day 7 server and client briefly, to catch programs that build but crash. CI (`.github/workflows/ci.yml`) runs both on Linux and macOS, the Day 6 and 7 tests under ThreadSanitizer, and `scripts/check_template.sh` against the template branch.
+<!-- /main-only -->
+<!-- template-only
+
+**Reference tests** (Days 5–7): `reference-tests/` holds the solutions' tests for the interfaces in the starter headers. Write your own tests first, then turn them on with `-DDAY5_REFERENCE_TESTS=ON` (or `DAY6_`, `DAY7_`) and run `ctest`. They encode the reference design's choices, so a failure can mean you decided differently, not that you're wrong.
+-->
 
 ## Learning Progression
 
@@ -456,12 +498,14 @@ Each day should follow this pattern:
 
 **Time Management**: Don't spend more than 3 hours on reading per day. The goal is practical competence, not theoretical mastery.
 
+<!-- main-only -->
 ## Versioning and Releases
 
 This project follows [semantic versioning](https://semver.org/) adapted for educational content:
 - **Major**: Breaking changes to project structure or prerequisites
 - **Minor**: New projects or significant enhancements  
 - **Patch**: Bug fixes and documentation updates
+<!-- /main-only -->
 
 ## Contributing
 
