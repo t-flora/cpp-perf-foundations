@@ -44,7 +44,13 @@ public:
 
     // TODO: the next complete payload, or nullopt if more bytes are needed. Throw
     // FrameError for a length over max_frame_. Don't let the buffer grow forever.
-    std::optional<std::string_view> next() { return std::nullopt; }
+    std::optional<std::string_view> next() {
+        (void)max_frame_;
+        return std::nullopt;
+    }
+
+    // TODO: bytes received but not yet handed out by next()
+    std::size_t buffered() const { return 0; }
 
 private:
     std::string buf_;

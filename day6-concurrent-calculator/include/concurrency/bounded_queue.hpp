@@ -33,9 +33,13 @@ public:
     // TODO: wake every blocked producer and consumer; pushes fail afterwards
     void close() {}
 
+    // TODO: the number of items right now (it may change as soon as you return it)
+    std::size_t size() const { return 0; }
+    std::size_t capacity() const { return capacity_; }
+
 private:
     const std::size_t capacity_;
-    std::mutex mutex_;
+    mutable std::mutex mutex_; // mutable: const members like size() lock it too
     std::condition_variable not_empty_;
     std::condition_variable not_full_;
     std::deque<T> items_;

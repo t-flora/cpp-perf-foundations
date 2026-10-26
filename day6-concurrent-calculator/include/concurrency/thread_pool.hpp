@@ -24,14 +24,28 @@ public:
     // TODO: run f(args...) on a worker; the future carries the result or the exception.
     // Hint: std::packaged_task is move-only, but std::function needs a copyable callable
     template <typename F, typename... Args>
-    auto submit(F&& f, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>>;
+    auto submit(F&& f, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>> {
+        (void)f;
+        ((void)args, ...);
+        return {};
+    }
+
+    std::size_t size() const { return workers_.size(); }
 
 private:
     BoundedQueue<std::function<void()>> tasks_;
     std::vector<std::thread> workers_;
 };
 
-// TODO: parallel_for(pool, begin, end, grain, body). If a chunk throws, what has to happen
-// before you rethrow?
+// TODO: run body(i) for every i in [begin, end), in chunks of `grain` indices submitted to the
+// pool, and wait for all of them. If a chunk throws, what has to happen before you rethrow?
+template <typename Body>
+void parallel_for(ThreadPool& pool, std::size_t begin, std::size_t end, std::size_t grain, Body body) {
+    (void)pool;
+    (void)begin;
+    (void)end;
+    (void)grain;
+    (void)body;
+}
 
 } // namespace concurrency

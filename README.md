@@ -1,9 +1,12 @@
 # C++ for High-Performance Engineering: 7-Day Foundational Project Series
+<!-- Generated from main's README by scripts/template_sync.py: edit it there, on main. -->
+
+A progressive series of one-day C++ projects designed to build the foundational skills needed for high-performance systems development. Each project introduces essential concepts while building toward the competence required for high-performance engineering. Some of these projects may take longer than a day, and that's fine!
 
 > **📚 Learning Resource**: This is the **template branch** containing project skeletons for learning.
-> 
+>
 > **For learners**: You're in the right place! This branch contains empty project templates to work with.
-> 
+>
 > **For instructors/reference**: Switch to the `main` branch to see complete solutions:
 > ```bash
 > git checkout main
@@ -13,7 +16,7 @@
 
 **Clone this template branch to start learning**:
 ```bash
-git clone -b template https://github.com/YOUR_USERNAME/cpp-perf-foundations.git
+git clone -b template https://github.com/t-flora/cpp-perf-foundations.git
 cd cpp-perf-foundations
 ```
 
@@ -28,14 +31,19 @@ The layout you will end up with (this branch ships only briefs and starter skele
 ```
 cpp-foundations/
 ├── README.md                 # This file
-├── .actrc                    # act config: run the GitHub Actions workflow locally
+├── FINDINGS.md               # What the measurements showed, across all days (main branch)
+├── .actrc                    # act config: run the Day 1 workflow locally (main branch)
 ├── scripts/
-│   ├── test_all.sh          # Build and test every day
-│   ├── simulate-ci.sh       # Day 1 CI steps on your machine
-│   └── simulate-ci-docker.sh  # Day 1 CI steps in an Ubuntu container
+│   ├── test_all.sh           # Build and test every day
+│   ├── smoke_all.sh          # Run every benchmark and program briefly (main branch)
+│   ├── check_template.sh     # Check the template branch against main (main branch)
+│   ├── template_sync.py      # Render the template's README and reference tests (main branch)
+│   ├── simulate-ci.sh        # Day 1 CI steps on your machine (main branch)
+│   └── simulate-ci-docker.sh # Day 1 CI steps in an Ubuntu container (main branch)
 ├── .github/
 │   └── workflows/
-│       └── day1-ci.yml      # GitHub Actions CI for Day 1
+│       ├── day1-ci.yml       # GitHub Actions CI for Day 1
+│       └── ci.yml            # Every day on Linux and macOS, TSan, template checks (main branch)
 ├── day1-cmake-ci/
 │   ├── README.md
 │   ├── CMakeLists.txt
@@ -405,6 +413,8 @@ cmake --build build
 ```
 
 `scripts/test_all.sh` builds and tests every day (or only the ones you name) in `build/<day>/`.
+
+**Reference tests** (Days 5–7): `reference-tests/` holds the solutions' tests for the interfaces in the starter headers. Write your own tests first, then turn them on with `-DDAY5_REFERENCE_TESTS=ON` (or `DAY6_`, `DAY7_`) and run `ctest`. They encode the reference design's choices, so a failure can mean you decided differently, not that you're wrong.
 
 ## Learning Progression
 

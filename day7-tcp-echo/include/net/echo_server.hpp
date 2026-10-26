@@ -5,14 +5,20 @@
 #include <net/socket.hpp>
 
 #include <atomic>
+#include <cstddef>
 #include <thread>
 
 namespace net {
 
+// poll is the stretch goal: one thread, non-blocking sockets, a poll() loop
+enum class ServerMode { threads, poll };
+
 class EchoServer {
 public:
     // TODO: start accepting on a background thread
-    explicit EchoServer(Fd listener) : listener_(std::move(listener)) {}
+    explicit EchoServer(Fd listener, ServerMode mode = ServerMode::threads) : listener_(std::move(listener)) {
+        (void)mode;
+    }
     EchoServer(const EchoServer&) = delete;
     EchoServer& operator=(const EchoServer&) = delete;
     ~EchoServer() { stop(); }
@@ -22,6 +28,9 @@ public:
     // TODO: close every connection and join every thread; safe to call twice.
     // A thread blocked in accept() or recv() won't notice a flag: what wakes it?
     void stop() {}
+
+    // TODO: connections accepted so far
+    std::size_t connections_accepted() const { return 0; }
 
 private:
     Fd listener_;

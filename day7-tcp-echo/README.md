@@ -62,6 +62,7 @@ Script the runs (start a server, run each configuration 3 times, save the JSON),
 
 ## Done When
 - [ ] `ctest` passes, and passes again under ThreadSanitizer with zero reports
+- [ ] The reference tests pass too, also under ThreadSanitizer (`-DDAY7_REFERENCE_TESTS=ON`, plus `-DDAY7_REFERENCE_POLL=ON` for the `poll()` server; see the main README). Write your own first
 - [ ] The server survives a client that sends a huge length, and one that disconnects mid-frame
 - [ ] `ANALYSIS.md` answers every question with numbers from both OSes
 

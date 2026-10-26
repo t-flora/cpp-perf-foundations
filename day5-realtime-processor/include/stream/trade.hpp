@@ -40,4 +40,10 @@ inline ParseError parse_trade_naive(std::string line, NaiveTrade& out) {
     return ParseError::FieldCount;
 }
 
+// TODO: a price in ticks with exactly 4 decimals: 1872500 -> "187.2500". Exact, so no double
+inline std::string ticks_to_string(std::int64_t ticks) {
+    (void)ticks;
+    return {};
+}
+
 } // namespace stream

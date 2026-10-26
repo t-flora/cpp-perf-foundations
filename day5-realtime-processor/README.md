@@ -65,6 +65,7 @@ In `results/ANALYSIS.md`, answer each question with numbers:
 
 ## Done When
 - [ ] `ctest` passes, including the byte-identical pipelines test
+- [ ] The reference tests pass too (`-DDAY5_REFERENCE_TESTS=ON`; see the main README). Write your own first
 - [ ] Both pipelines produce identical output on a 1M-trade stream (check with `cmp`)
 - [ ] `ANALYSIS.md` answers every question with numbers
 

@@ -61,6 +61,7 @@ In `results/ANALYSIS.md`, answer each question with numbers:
 
 ## Done When
 - [ ] `ctest` passes, and passes again under ThreadSanitizer with zero reports
+- [ ] The reference tests pass too, also under ThreadSanitizer (`-DDAY6_REFERENCE_TESTS=ON`; see the main README). Write your own first
 - [ ] TSan reports the race in `race_demo`
 - [ ] `ANALYSIS.md` answers every question with numbers
 

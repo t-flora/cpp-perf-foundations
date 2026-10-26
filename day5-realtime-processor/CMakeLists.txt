@@ -14,3 +14,12 @@ project(realtime_processor VERSION 0.1.0 LANGUAGES CXX)
 #     SAMPLE_TRADES="${CMAKE_CURRENT_SOURCE_DIR}/data/sample_trades.csv")
 
 # TODO: component benchmarks
+
+# Reference tests (reference-tests/), once you've written your own. Keep this block last,
+# so options like ThreadSanitizer apply to them too:
+#   cmake -B build -DDAY5_REFERENCE_TESTS=ON && cmake --build build && (cd build && ctest)
+option(DAY5_REFERENCE_TESTS "Build the solutions' tests in reference-tests/" OFF)
+if(DAY5_REFERENCE_TESTS)
+    enable_testing()
+    add_subdirectory(reference-tests)
+endif()
