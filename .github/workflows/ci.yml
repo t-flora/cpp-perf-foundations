@@ -64,6 +64,41 @@ jobs:
       - name: Day 7
         run: docker build -t day7-tcp-echo day7-tcp-echo
 
+  # Informational, never fails on numbers. On the analysis machine, a loopback TCP round trip
+  # costs ~18x a Unix-socket one, with a content-filter network extension installed
+  # (Day 7, ANALYSIS.md question 1). Runners have no such extension: this is the control.
+  loopback:
+    name: Loopback probe (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the probe
+        run: |
+          cmake -S day7-tcp-echo -B build/day7
+          cmake --build build/day7 --parallel --target transport_probe
+      - name: Describe the machine
+        run: |
+          uname -a
+          if [ "$RUNNER_OS" = macOS ]; then
+            sw_vers; sysctl -n machdep.cpu.brand_string hw.ncpu
+            systemextensionsctl list || true
+          else
+            nproc; grep -m1 'model name' /proc/cpuinfo || true
+          fi
+      - name: Run it three times
+        run: |
+          for i in 1 2 3; do build/day7/transport_probe | sed "s/^{/{\"run\": $i, /"; done | tee probe.jsonl
+          { echo "### Loopback probe, $RUNNER_OS"; echo '```'; cat probe.jsonl; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: loopback-${{ matrix.os }}
+          path: probe.jsonl
+
   template:
     name: Template branch
     runs-on: ubuntu-latest
