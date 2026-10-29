@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - name: Checkout code # CI will checkout the code from the repository
-      uses: actions/checkout@v4 # without this, the runner won't have access to your code
+      uses: actions/checkout@v7 # without this, the runner won't have access to your code
 
     - name: Install CMake (Ubuntu) # CI will install CMake on target platform
       if: matrix.os == 'ubuntu-latest'

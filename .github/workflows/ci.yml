@@ -26,7 +26,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build and test every day
         run: scripts/test_all.sh
       - name: Run every benchmark and program briefly
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Newer kernels randomize mmap addresses more than TSan's shadow-memory layout allows
       - name: Lower ASLR entropy for TSan
         run: sudo sysctl vm.mmap_rnd_bits=28
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Both images run ctest while building, so a failing test fails the build
       - name: Day 3
         run: docker build -t day3-sorting-bench day3-docker-benchmarks
@@ -67,16 +67,17 @@ jobs:
   # Informational, never fails on numbers. On the analysis machine, a loopback TCP round trip
   # costs ~18x a Unix-socket one, with a content-filter network extension installed
   # (Day 7, ANALYSIS.md question 1). Runners have no such extension: this is the control.
+  # macos-15 matches the analysis machine's macOS version; macos-latest is newer.
   loopback:
     name: Loopback probe (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-15, macos-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build the probe
         run: |
           cmake -S day7-tcp-echo -B build/day7
@@ -94,7 +95,7 @@ jobs:
         run: |
           for i in 1 2 3; do build/day7/transport_probe | sed "s/^{/{\"run\": $i, /"; done | tee probe.jsonl
           { echo "### Loopback probe, $RUNNER_OS"; echo '```'; cat probe.jsonl; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: loopback-${{ matrix.os }}
           path: probe.jsonl
@@ -104,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Work on branch X pairs with X-template, as dayN does with dayN-template
       - name: Pick the template branch to check
         id: pick
@@ -116,7 +117,7 @@ jobs:
           fi
           echo "Checking $ref"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ steps.pick.outputs.ref }}
           path: template-branch
